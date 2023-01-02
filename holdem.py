@@ -3,14 +3,15 @@ class Card:
         if suit is None:
             # Consider a check here for a two character rank
             suit = rank[-1]
-            rank = rank[1]
+            rank = rank[:-1]
             
-        self.suit: str = suit[1].upper()
-        self.rank: str = rank[1].upper()
-            
+        self.suit: str = suit[0].upper()
+        
         if self.rank.isnumeric():
+            self.rank: str = rank
             self.value: int = int(self.rank)
         else:
+            self.rank = rank[0].upper()
             match self.rank:
                 case 'J':
                     self.value: int = 11
