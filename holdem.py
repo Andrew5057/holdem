@@ -1,8 +1,8 @@
 class Card:
-    def __init__(self, suit: str, rank: str = None):
-        if rank is None:
-            suit_initial: str = suit[-1]
-            rank: str = suit[:-1]
+    def __init__(self, rank: str, suit: str = None):
+        if suit is None:
+            suit_initial: str = rank[-1]
+            rank: str = rank[:-1]
             match suit_initial:
                 case 'H':
                     self.suit: str = 'Heart'
@@ -17,13 +17,13 @@ class Card:
                 self.value = int(self.rank)
             else:
                 match self.rank:
-                    case 'Jack':
+                    case 'J':
                         self.value: int = 11
-                    case 'Queen':
+                    case 'Q':
                         self.value: int = 12
-                    case 'King':
+                    case 'K':
                         self.value: int = 13
-                    case 'Ace':
+                    case 'A':
                         self.value: int = 14
 
         else:
@@ -42,4 +42,10 @@ class Card:
                     case 'Ace':
                         self.value: int = 14
 x = Card('4H')
-y = Card('4', 'King')
+print(f'{x.suit}, {x.rank}, {x.value}')
+x = Card('KH')
+print(f'{x.suit}, {x.rank}, {x.value}')
+x = Card('4', 'Heart')
+print(f'{x.suit}, {x.rank}, {x.value}')
+x = Card('King', 'Heart')
+print(f'{x.suit}, {x.rank}, {x.value}')
