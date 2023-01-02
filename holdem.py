@@ -15,4 +15,8 @@ class Card:
                     self.value: int = 13
                 case 'ace':
                     self.value: int = 14
-Card('heart', 'ace')
+x = Card('heart', 'ace')
+
+print(x.suit)
+print(x.rank)
+print(x.value)
