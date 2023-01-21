@@ -1,3 +1,5 @@
+from random import shuffle
+
 class Card:
     def __init__(self, rank: str, suit: str = None):
         '''A class that represents a standard playing card.
@@ -26,12 +28,27 @@ class Card:
         # Allows most representations of the suit to be handled with the same
         # code.
         self.suit: str = suit[0].upper()
+        if not self.suit in ('H', 'D', 'S', 'C'):
+            raise ValueError("Suit must begin with 'H', 'D', 'S', or 'C'")
         
+        if isinstance(rank, int):
+            rank = str(rank)
+
         if rank.isnumeric():
-            # Handles numeric cards' ranks and values, with 1's being handled
-            # later.
+            # Handles numeric cards' ranks and values
             self.rank: str = rank
             self.value: int = int(self.rank)
+
+            match self.value:
+                case 1:
+                    self.rank: str = 'A'
+                    self.value: int = 14
+                case 11:
+                    self.rank: str = 'J'
+                case 12:
+                    self.rank: str = 'Q'
+                case 13:
+                    self.rank: str = 'K'
         else:
             # Handles face cards' ranks and values.
             self.rank: str = rank[0].upper()
@@ -44,11 +61,23 @@ class Card:
                     self.value: int = 13
                 case 'A':
                     self.value: int = 14
-        
-        # Allows the user to input either '1' for 'Ace'.
-        if self.rank == '1':
-            self.rank: str = 'A'
-            self.value: int = 14
+    
+    def __repr__(self) -> str:
+        return f"Card('{self.rank}{self.suit}')"
+    
+    # ADD: __eq__, __gt__, __lt__, 
+    def  __eq__(self, card) -> bool:
+        same_value = self.value == card.value
+        same_suit = self.suit == card.suit
+        return same_value and same_suit
+
+class Deck:
+    def __init__(self):
+        pass
+        self.cards = [Card(str(rank), suit) for rank in range(1, 14) for suit in ('C', 'S', 'D', 'H')]
+
+    def shuffle(self):
+        shuffle(self.cards)
 
 # Runs if and only if this is run as a script
 if __name__ == '__main__':
@@ -71,3 +100,4 @@ if __name__ == '__main__':
     print(f'{x.suit}, {x.rank}, {x.value}')
     x = Card('1', 'Heart')
     print(f'{x.suit}, {x.rank}, {x.value}')
+
