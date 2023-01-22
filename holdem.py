@@ -75,6 +75,9 @@ class Card:
     
     # ADD: __eq__, __gt__, __lt__, 
     def  __eq__(self, card) -> bool:
+        if not isinstance(card, Card):
+            return False
+        
         same_value = self.value == card.value
         same_suit = self.suit == card.suit
         return same_value and same_suit
