@@ -81,6 +81,9 @@ class Deck:
     
     def draw(self, count=1):
         return tuple([self.cards.pop() for i in range(count)])
+    
+    def __len__(self):
+        return len(self.cards)
 
 # Runs if and only if this is run as a script
 if __name__ == '__main__':
