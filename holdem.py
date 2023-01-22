@@ -39,6 +39,9 @@ class Card:
             self.rank: str = rank
             self.value: int = int(self.rank)
 
+            if self.value < 1 or self.value > 14:
+                raise ValueError('Numeric ranks must be between 1 and 14 inclusive.')
+
             match self.value:
                 case 1:
                     self.rank: str = 'A'
