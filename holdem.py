@@ -73,7 +73,6 @@ class Card:
 
 class Deck:
     def __init__(self):
-        pass
         self.cards = [Card(str(rank), suit) for rank in range(1, 14) for suit in ('C', 'S', 'D', 'H')]
 
     def shuffle(self):
