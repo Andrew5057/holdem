@@ -49,6 +49,9 @@ class Card:
                     self.rank: str = 'Q'
                 case 13:
                     self.rank: str = 'K'
+                case 14:
+                    self.rank: str = 'A'
+                
         else:
             # Handles face cards' ranks and values.
             self.rank: str = rank[0].upper()
