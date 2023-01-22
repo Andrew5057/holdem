@@ -78,6 +78,9 @@ class Deck:
 
     def shuffle(self):
         shuffle(self.cards)
+    
+    def draw(self, count=1):
+        return tuple([self.cards.pop() for i in range(count)])
 
 # Runs if and only if this is run as a script
 if __name__ == '__main__':
