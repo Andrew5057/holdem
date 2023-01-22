@@ -84,6 +84,9 @@ class Deck:
     
     def __len__(self):
         return len(self.cards)
+    
+    def __iter__(self):
+        yield from self.cards
 
 # Runs if and only if this is run as a script
 if __name__ == '__main__':
