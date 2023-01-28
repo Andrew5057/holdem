@@ -100,4 +100,12 @@ class Deck:
 
 class Player:
     def __init__(self, *args):
-        self.hand = tuple([card for card in args])
+        self.hand: tuple = tuple([card for card in args])
+
+class Game:
+    def __init__(self, player_count: int):
+        self.deck: Deck = Deck()
+        self.deck.shuffle()
+        self.player_count = player_count
+        self.players: list[Player] = [Player(self.deck.draw(2)) for player in range(player_count)]
+        
