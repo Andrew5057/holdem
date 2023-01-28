@@ -39,6 +39,9 @@ class Card:
             self.rank: str = rank
             self.value: int = int(self.rank)
 
+            if self.value < 1 or self.value > 14:
+                raise ValueError('Numeric ranks must be between 1 and 14 inclusive.')
+
             match self.value:
                 case 1:
                     self.rank: str = 'A'
@@ -49,6 +52,9 @@ class Card:
                     self.rank: str = 'Q'
                 case 13:
                     self.rank: str = 'K'
+                case 14:
+                    self.rank: str = 'A'
+                
         else:
             # Handles face cards' ranks and values.
             self.rank: str = rank[0].upper()
@@ -61,19 +67,23 @@ class Card:
                     self.value: int = 13
                 case 'A':
                     self.value: int = 14
+                case _:
+                    raise ValueError("Non-numeric ranks must begin with 'J', 'Q', 'K', or 'A'.")
     
     def __repr__(self) -> str:
         return f"Card('{self.rank}{self.suit}')"
     
     # ADD: __eq__, __gt__, __lt__, 
     def  __eq__(self, card) -> bool:
+        if not isinstance(card, Card):
+            return False
+        
         same_value = self.value == card.value
         same_suit = self.suit == card.suit
         return same_value and same_suit
 
 class Deck:
     def __init__(self):
-        pass
         self.cards = [Card(str(rank), suit) for rank in range(1, 14) for suit in ('C', 'S', 'D', 'H')]
 
     def shuffle(self):
