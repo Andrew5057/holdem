@@ -106,6 +106,6 @@ class Game:
     def __init__(self, player_count: int):
         self.deck: Deck = Deck()
         self.deck.shuffle()
-        self.player_count = player_count
+        self.player_count: int = player_count
         self.players: list[Player] = [Player(self.deck.draw(2)) for player in range(player_count)]
-        
+
