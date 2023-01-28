@@ -104,6 +104,9 @@ class Player:
             self.hand = args[0]
         else:
             self.hand: tuple[Card] = tuple([card for card in args])
+    
+    def __repr__(self):
+        return f'Player({self.hand[0]}, {self.hand[1]})'
 
 class Game:
     def __init__(self, player_count: int):
