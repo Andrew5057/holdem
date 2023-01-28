@@ -98,25 +98,3 @@ class Deck:
     def __iter__(self):
         yield from self.cards
 
-# Runs if and only if this is run as a script
-if __name__ == '__main__':
-    # Tests various cards.
-    x = Card('4H')
-    print(f'{x.suit}, {x.rank}, {x.value}')
-    x = Card('KH')
-    print(f'{x.suit}, {x.rank}, {x.value}')
-    x = Card('10H')
-    print(f'{x.suit}, {x.rank}, {x.value}')
-    x = Card('1H')
-    print(f'{x.suit}, {x.rank}, {x.value}')
-
-
-    x = Card('4', 'Heart')
-    print(f'{x.suit}, {x.rank}, {x.value}')
-    x = Card('King', 'Heart')
-    print(f'{x.suit}, {x.rank}, {x.value}')
-    x = Card('10', 'Heart')
-    print(f'{x.suit}, {x.rank}, {x.value}')
-    x = Card('1', 'Heart')
-    print(f'{x.suit}, {x.rank}, {x.value}')
-
