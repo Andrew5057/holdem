@@ -98,3 +98,6 @@ class Deck:
     def __iter__(self):
         yield from self.cards
 
+class Player:
+    def __init__(self, *args):
+        self.hand = tuple([card for card in args])
