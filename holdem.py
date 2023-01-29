@@ -65,11 +65,16 @@ class Card:
     def __repr__(self) -> str:
         return f"Card('{self.rank}{self.suit}')"
     
+    def __str__(self) -> str:
+        return f'{self.rank}{self.suit}'
+    
     # ADD: __eq__, __gt__, __lt__, 
     def  __eq__(self, card) -> bool:
         same_value = self.value == card.value
         same_suit = self.suit == card.suit
         return same_value and same_suit
+    def __lt__(self, card) -> bool:
+        return self.value < card.value
 
 class Deck:
     def __init__(self):
