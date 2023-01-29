@@ -32,7 +32,7 @@ class Card:
             raise ValueError("Suit must begin with 'H', 'D', 'S', or 'C'")
         
         if isinstance(rank, int):
-            rank = str(rank)
+            rank: str = str(rank)
 
         if rank.isnumeric():
             # Handles numeric cards' ranks and values
@@ -78,21 +78,21 @@ class Card:
         if not isinstance(card, Card):
             return False
         
-        same_value = self.value == card.value
-        same_suit = self.suit == card.suit
+        same_value: bool = self.value == card.value
+        same_suit: bool = self.suit == card.suit
         return same_value and same_suit
 
 class Deck:
     def __init__(self):
-        self.cards = [Card(str(rank), suit) for rank in range(1, 14) for suit in ('C', 'S', 'D', 'H')]
+        self.cards: list[Card] = [Card(str(rank), suit) for rank in range(1, 14) for suit in ('C', 'S', 'D', 'H')]
 
     def shuffle(self):
         shuffle(self.cards)
-    
-    def draw(self, count=1):
+
+    def draw(self, count=1) -> tuple[Card]:
         return tuple([self.cards.pop() for i in range(count)])
     
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.cards)
     
     def __iter__(self):
@@ -101,11 +101,11 @@ class Deck:
 class Player:
     def __init__(self, *args):
         if len(args) == 1:
-            self.hand = args[0]
+            self.hand: tuple[Card] = args[0]
         else:
             self.hand: tuple[Card] = tuple([card for card in args])
     
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'Player({self.hand[0]}, {self.hand[1]})'
 
 class Game:
