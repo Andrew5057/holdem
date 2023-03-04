@@ -67,12 +67,15 @@ class Card:
                     self.value: int = 14
                 case _:
                     raise ValueError("Non-numeric ranks must begin with 'J', 'Q', 'K', or 'A'.")
+        
+        self.str: str = f'{self.rank}{self.suit}'
+        self.repr: str = f"Card('{self.rank}{self.suit}')"
     
     def __repr__(self) -> str:
-        return f"Card('{self.rank}{self.suit}')"
+        return self.repr
     
     def __str__(self) -> str:
-        return f'{self.rank}{self.suit}'
+        return self.str
     
     # ADD: __eq__, __gt__, __lt__, 
     def  __eq__(self, card) -> bool:
