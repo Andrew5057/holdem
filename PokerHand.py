@@ -8,10 +8,7 @@ class PokerHand:
         self.cards = cards
         self.cards.sort()
         # String representations of hand
-        self.all_cards = "" # assign this later
-        self.diamonds = ""
-        self.hearts = ""
-        self.spades = ""
-        self.clubs = ""
-    def create_strings(self):
-        pass
+        self.card_string = ""
+    def create_string(self):
+        self.cards.sort()
+        self.cards_string = ''.join([card.str for card in self.cards])
