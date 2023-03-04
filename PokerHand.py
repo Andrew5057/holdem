@@ -1,4 +1,5 @@
-from holdemp.py import *
+from holdem import *
+from Card import *
 
 class PokerHand:
     def __init__(self, cards: list[Card]):
