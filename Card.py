@@ -68,7 +68,7 @@ class Card:
                 case _:
                     raise ValueError("Non-numeric ranks must begin with 'J', 'Q', 'K', or 'A'.")
         
-        self.str: str = f'{self.rank}{self.suit}'
+        self.str: str = f'{self.rank[0]}{self.suit}'
         self.repr: str = f"Card('{self.rank}{self.suit}')"
     
     def __repr__(self) -> str:
