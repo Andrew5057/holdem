@@ -28,9 +28,14 @@ class PokerHand:
         return flush[0]
     
     def flush(self) -> tuple[int]:
-        flush: re.Match = re.search(r'([1-9JQKA])([HDSC]).*([1-9JQKA])\2.*([1-9JQKA])\2.*([1-9JQKA])\2.*([1-9JQKA])\2', self.cards_string)
+        flush: re.Match = re.search(r'([1-9JQKA])([HDSC])(.*[1-9JQKA]\2)+', self.cards_string)
+        
         if flush is None: return None
-        return tuple(self.value_map[value] for value in flush.groups() if not value in ('H', 'D', 'S', 'C'))
+
+        matches = ''.join((flush.group(1), flush.group(3)[::2]))
+        matches = tuple([self.value_map[char] for char in matches])
+
+        return matches[:5]
 
     def two_pair(self) -> tuple[int]:
         two_pair: re.Match = re.search(r'([1-9JQKA]).\1.*([1-9JQKA]).\2', 
@@ -47,7 +52,3 @@ class PokerHand:
             return (highest, second, kicker)
         
         return None
-
-hand = PokerHand([Card('QH'), Card('JH'), Card('10H'), Card('9H'), Card('8H'), Card('7H'), Card('6H')])
-hand.create_string()
-print(hand.flush())
