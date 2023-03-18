@@ -19,13 +19,19 @@ class PokerHand:
         self.cards.sort(reverse=True)
         self.cards_string = ''.join([card.str for card in self.cards])
     
+    def straight_flush(self) -> int:
+        flush = self.flush()
+        # enumerate(iterable) returns both the index and value for each item.
+        for i, value in enumerate(flush[:-1]):
+            if not value == flush[i+1] + 1:
+                return None
+        return flush[0]
     
-    def flush(self)-> tuple[int]:
-        print(self.cards_string)
+    def flush(self) -> tuple[int]:
         flush: re.Match = re.search(r'([1-9JQKA])([HDSC]).*([1-9JQKA])\2.*([1-9JQKA])\2.*([1-9JQKA])\2.*([1-9JQKA])\2', self.cards_string)
         if flush is None: return None
         return tuple(self.value_map[value] for value in flush.groups() if not value in ('H', 'D', 'S', 'C'))
-        
+
     def two_pair(self) -> tuple[int]:
         two_pair: re.Match = re.search(r'([1-9JQKA]).\1.*([1-9JQKA]).\2', 
                                        self.cards_string)
