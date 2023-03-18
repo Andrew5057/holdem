@@ -7,7 +7,7 @@ class PokerHand:
         # Cards as they get introduced, no order
         self.cards: list[Card] = cards
         self.cards.sort(reverse=True)
-        
+
         # String representations of hand
         self.card_string: str = ""
         self.value_map: dict[str: int] = {'1': 10, '2': 2, '3': 3, '4':4, 
@@ -15,9 +15,17 @@ class PokerHand:
                                          '10': 10, 'J': 11, 'Q': 12, 'K': 13, 
                                          'A': 14}
     
-    def create_string(self):
+    def create_string(self) -> None:
         self.cards.sort(reverse=True)
         self.cards_string = ''.join([card.str for card in self.cards])
+    
+    
+    def flush(self)-> tuple[int]:
+        print(self.cards_string)
+        flush: re.Match = re.search(r'([1-9JQKA])([HDSC]).*([1-9JQKA])\2.*([1-9JQKA])\2.*([1-9JQKA])\2.*([1-9JQKA])\2', self.cards_string)
+        if flush is None: return None
+        return tuple(self.value_map[value] for value in flush.groups() if not value in ('H', 'D', 'S', 'C'))
+        
     def two_pair(self) -> tuple[int]:
         two_pair: re.Match = re.search(r'([1-9JQKA]).\1.*([1-9JQKA]).\2', 
                                        self.cards_string)
@@ -33,7 +41,3 @@ class PokerHand:
             return (highest, second, kicker)
         
         return None
-    
-hand = PokerHand([Card('KH'),Card('KD'),Card('QH'),Card('JS'),Card('JD')])
-hand.create_string()
-print(hand.two_pair())
