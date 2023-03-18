@@ -47,3 +47,7 @@ class PokerHand:
             return (highest, second, kicker)
         
         return None
+
+hand = PokerHand([Card('QH'), Card('JH'), Card('10H'), Card('9H'), Card('8H'), Card('7H'), Card('6H')])
+hand.create_string()
+print(hand.flush())
