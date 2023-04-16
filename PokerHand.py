@@ -83,6 +83,10 @@ class PokerHand:
                 high = None
         return 5 if (count == 4) and (14 in self.spades) else None
     
+    def four_of_a_kind(self) -> int:
+        four_of_a_kind: re.Match = re.search(r'([2-9TJQKA]).\1.\1.\1', self.cards_string)
+        return self.value_map[four_of_a_kind.group(1)] if four_of_a_kind is not None else None
+
     def flush(self) -> tuple[int]:
         flush: re.Match = re.search(r'([2-9TJQKA])([HDSC]).*?([2-9TJQKA])\2.*?([2-9TJQKA])\2.*?([2-9TJQKA])\2.*?([2-9TJQKA])\2',
                                     self.cards_string)
@@ -120,5 +124,3 @@ class PokerHand:
             return (highest, second, kicker)
         
         return None
-
-x=PokerHand([Card(i) for i in ('5H', '4H', '3H', '2H', 'AH', '9H', '8H')])
