@@ -19,7 +19,6 @@ class Card:
 
         # Handles pattern 1.
         if suit is None:
-            # Consider a check here for a two character rank
             suit: str = rank[-1]
             rank: str = rank[:-1]
         
@@ -44,6 +43,8 @@ class Card:
                 case 1:
                     self.rank: str = 'A'
                     self.value: int = 14
+                case 10:
+                    self.rank: str = 'T'
                 case 11:
                     self.rank: str = 'J'
                 case 12:
@@ -57,6 +58,8 @@ class Card:
             # Handles face cards' ranks and values.
             self.rank: str = rank[0].upper()
             match self.rank:
+                case 'T':
+                    self.value: int = 10
                 case 'J':
                     self.value: int = 11
                 case 'Q':
@@ -66,7 +69,7 @@ class Card:
                 case 'A':
                     self.value: int = 14
                 case _:
-                    raise ValueError("Non-numeric ranks must begin with 'J', 'Q', 'K', or 'A'.")
+                    raise ValueError("Non-numeric ranks must begin with 'T', 'J', 'Q', 'K', or 'A'.")
         
         self.str: str = f'{self.rank[0]}{self.suit}'
         self.repr: str = f"Card('{self.rank}{self.suit}')"
