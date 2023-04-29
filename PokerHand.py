@@ -14,12 +14,17 @@ class PokerHand:
     def create_string(self) -> None:
         self.cards.sort(reverse=True)
         self.cards_string = ''.join([card.value for card in self.cards])
+
+        self.hearts = tuple([card.value for card in self.cards if card.suit == 'H'])
+        self.diamonds = tuple([card.value for card in self.cards if card.suit == 'D'])
+        self.clubs = tuple([card.value for card in self.cards if card.suit == 'C'])
+        self.spades = tuple([card.value for card in self.cards if card.suit == 'S'])
     
     def straight_flush(self) -> int:
         count = 0
         high = None
 
-        for value in range(14, 1, -1):
+        for value in self.possible_ranks:
             if value in self.hearts:
                 if high is None: high = value
                 count += 1
@@ -32,7 +37,7 @@ class PokerHand:
         count = 0
         high = None
         
-        for value in range(14, 1, -1):
+        for value in self.possible_ranks:
             if value in self.diamonds:
                 if high is None: high = value
                 count += 1
@@ -45,7 +50,7 @@ class PokerHand:
         count = 0
         high = None
         
-        for value in range(14, 1, -1):
+        for value in self.possible_ranks:
             if value in self.clubs:
                 if high is None: high = value
                 count += 1
@@ -58,7 +63,7 @@ class PokerHand:
         count = 0
         high = None
         
-        for value in range(14, 1, -1):
+        for value in self.possible_ranks:
             if value in self.spades:
                 if high is None: high = value
                 count += 1
@@ -79,9 +84,16 @@ class PokerHand:
         return None
 
     def flush(self) -> tuple[int]:
-        #rewrite
+        if len(self.hearts) >= 5:
+            return int(''.join(self.hearts)[:5], 16)
+        if len(self.diamonds) >= 5:
+            return int(''.join(self.diamonds)[:5], 16)
+        if len(self.clubs) >= 5:
+            return int(''.join(self.clubs)[:5], 16)
+        if len(self.spades) >= 5:
+            return int(''.join(self.spades)[:5], 16)
+
         pass
-    
     
     def straight(self) -> int:
         count = 0
