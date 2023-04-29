@@ -3,10 +3,10 @@ from Card import *
 import re
 
 class PokerHand:
-    value_map: dict[str: int] = {'A': 'E', 'K': 'D', 'Q': 'C', 'J': 'B',
-                                        'T': 'A', '9': '9', '8': '8', '7': '7',
-                                        '6': '6', '5': '5', '4': '4', '3': '3',
-                                        '2': '2'}
+    value_map: dict[str: int] = {'A': 14, 'K': 13, 'Q': 12, 'J': 11,
+                                        'T': 10, '9': 9, '8': 7, '7': 7,
+                                        '6': 6, '5': 5, '4': 4, '3': 3,
+                                        '2': 2}
     def __init__(self, cards: list[Card]):
         # Cards as they get introduced, no order
         self.cards: list[Card] = cards
@@ -30,7 +30,7 @@ class PokerHand:
                                     in range(len(self.cards_string)-1) if
                                     self.cards_string[i+1] == 'H'])
     
-    def straight_flush(self) -> int: #8
+    def straight_flush(self) -> int:
         count = 0
         high = None
 
@@ -38,11 +38,11 @@ class PokerHand:
             if value in self.hearts:
                 if high is None: high = value
                 count += 1
-                if count == 5: return 8, int(''.join([card for card in range(high, high-6, -1)]), 16)
+                if count == 5: return high
             else:
                 count = 0
                 high = None
-        if (count == 4) and (14 in self.hearts): return 8, int('54321', 16)
+        if (count == 4) and (14 in self.hearts): return 5
 
         count = 0
         high = None
@@ -51,11 +51,11 @@ class PokerHand:
             if value in self.diamonds:
                 if high is None: high = value
                 count += 1
-                if count == 5: return 8, int(''.join([self.value_map[card] for card in range(high, high-6, -1)]), 16)
+                if count == 5: return high
             else:
                 count = 0
                 high = None
-        if (count == 4) and (14 in self.diamonds): return 8, int('54321', 16)
+        if (count == 4) and (14 in self.diamonds): return 5
 
         count = 0
         high = None
@@ -64,11 +64,11 @@ class PokerHand:
             if value in self.clubs:
                 if high is None: high = value
                 count += 1
-                if count == 5: return 8, int(''.join([self.value_map[card] for card in range(high, high-6, -1)]), 16)
+                if count == 5: return high
             else:
                 count = 0
                 high = None
-        if (count == 4) and (14 in self.clubs): return 8, int('54321', 16)
+        if (count == 4) and (14 in self.clubs): return 5
 
         count = 0
         high = None
@@ -77,23 +77,23 @@ class PokerHand:
             if value in self.spades:
                 if high is None: high = value
                 count += 1
-                if count == 5: return 8, int(''.join([self.value_map[card] for card in range(high, high-6, -1)]), 16)
+                if count == 5: return high
             else:
                 count = 0
                 high = None
-        return 8, int('54321', 16) if (count == 4) and (14 in self.spades) else None
+        return 5 if (count == 4) and (14 in self.spades) else None
     
-    def four_of_a_kind(self) -> int: #7
+    def four_of_a_kind(self) -> int:
         four_of_a_kind: re.Match = re.search(r'([2-9TJQKA]).\1.\1.\1', self.cards_string)
-        return 7, self.value_map[four_of_a_kind.group(1)] if four_of_a_kind is not None else None # Add kicker
+        return self.value_map[four_of_a_kind.group(1)] if four_of_a_kind is not None else None
 
-    def flush(self) -> tuple[int]: #5
+    def flush(self) -> tuple[int]:
         flush: re.Match = re.search(r'([2-9TJQKA])([HDSC]).*?([2-9TJQKA])\2.*?([2-9TJQKA])\2.*?([2-9TJQKA])\2.*?([2-9TJQKA])\2',
                                     self.cards_string)
-        return 5, int(''.join([self.value_map[rank] for rank in flush.groups() if rank not in 'HDSC']), 16) if flush is not None else None
+        return tuple([self.value_map[rank] for rank in flush.groups() if rank not in 'HDSC']) if flush is not None else None
     
     
-    def straight(self) -> int: #4
+    def straight(self) -> int:
         count = 0
         high = None
 
@@ -107,9 +107,9 @@ class PokerHand:
                 high = None
             
         # The for loop misses bottom ace, so this checks for it.
-        return 4, int('54321', 16) if (count == 4) and ('A' in self.cards_string) else None
+        return 5 if (count == 4) and ('A' in self.cards_string) else None
 
-    def two_pair(self) -> tuple[int]: #2
+    def two_pair(self) -> tuple[int]:
         two_pair: re.Match = re.search(r'([2-9TJQKA]).\1.*([2-9TJQKA]).\2', 
                                        self.cards_string)
         if two_pair is not None:
