@@ -23,55 +23,55 @@ class PokerHand:
     def straight_flush(self) -> int:
         count = 0
         high = None
-
-        for value in self.possible_ranks:
+        
+        for i, value in enumerate(self.possible_ranks):
             if value in self.hearts:
                 if high is None: high = value
                 count += 1
-                if count == 5: return high
+                if count == 5: return int('8'+high+''.join(self.possible_ranks[i-3:i+1]), 16)
             else:
                 count = 0
                 high = None
-        if (count == 4) and (14 in self.hearts): return 5
+        if (count == 4) and (14 in self.hearts): return int('854321', 16)
 
         count = 0
         high = None
         
-        for value in self.possible_ranks:
+        for i, value in enumerate(self.possible_ranks):
             if value in self.diamonds:
                 if high is None: high = value
                 count += 1
-                if count == 5: return high
+                if count == 5: return int('8'+high+''.join(self.possible_ranks[i-3:i+1]), 16)
             else:
                 count = 0
                 high = None
-        if (count == 4) and (14 in self.diamonds): return 5
+        if (count == 4) and (14 in self.diamonds): return int('854321', 16)
 
         count = 0
         high = None
         
-        for value in self.possible_ranks:
+        for i, value in enumerate(self.possible_ranks):
             if value in self.clubs:
                 if high is None: high = value
                 count += 1
-                if count == 5: return high
+                if count == 5: return int('8'+high+''.join(self.possible_ranks[i-3:i+1]), 16)
             else:
                 count = 0
                 high = None
-        if (count == 4) and (14 in self.clubs): return 5
+        if (count == 4) and (14 in self.clubs): return int('854321', 16)
 
         count = 0
         high = None
         
-        for value in self.possible_ranks:
+        for i, value in enumerate(self.possible_ranks):
             if value in self.spades:
                 if high is None: high = value
                 count += 1
-                if count == 5: return high
+                if count == 5: return int('8'+high+''.join(self.possible_ranks[i-3:i+1]), 16)
             else:
                 count = 0
                 high = None
-        return 5 if (count == 4) and (14 in self.spades) else None
+        return int('854321', 16) if (count == 4) and (14 in self.spades) else None
     
     def four_of_a_kind(self) -> int:
         four_of_a_kind: re.Match = re.search(r'(.)\1\1\1', self.cards_string)
