@@ -19,7 +19,6 @@ class Card:
 
         # Handles pattern 1.
         if suit is None:
-            # Consider a check here for a two character rank
             suit: str = rank[-1]
             rank: str = rank[:-1]
         
@@ -35,40 +34,49 @@ class Card:
         if rank.isnumeric():
             # Handles numeric cards' ranks and values
             self.rank: str = rank
-            self.value: int = int(self.rank)
+            self.value: int = rank
 
             if self.value < 1 or self.value > 14:
                 raise ValueError('Numeric ranks must be between 1 and 14 inclusive.')
 
             match self.value:
-                case 1:
+                case '1':
                     self.rank: str = 'A'
-                    self.value: int = 14
-                case 11:
+                    self.value: int = 'E'
+                case '10':
+                    self.rank: str = 'T'
+                    self.value = 'A'
+                case '11':
                     self.rank: str = 'J'
-                case 12:
+                    self.value = 'B'
+                case '12':
                     self.rank: str = 'Q'
-                case 13:
+                    self.value = 'C'
+                case '13':
                     self.rank: str = 'K'
-                case 14:
+                    self.value = 'D'
+                case '14':
                     self.rank: str = 'A'
+                    self.value = 'E'
                 
         else:
             # Handles face cards' ranks and values.
             self.rank: str = rank[0].upper()
             match self.rank:
+                case 'T':
+                    self.value: int = 'A'
                 case 'J':
-                    self.value: int = 11
+                    self.value: int = 'B'
                 case 'Q':
-                    self.value: int = 12
+                    self.value: int = 'C'
                 case 'K':
-                    self.value: int = 13
+                    self.value: int = 'D'
                 case 'A':
-                    self.value: int = 14
+                    self.value: int = 'E'
                 case _:
-                    raise ValueError("Non-numeric ranks must begin with 'J', 'Q', 'K', or 'A'.")
+                    raise ValueError("Non-numeric ranks must begin with 'T', 'J', 'Q', 'K', or 'A'.")
         
-        self.str: str = f'{self.rank}{self.suit}'
+        self.str: str = f'{self.rank[0]}{self.suit}'
         self.repr: str = f"Card('{self.rank}{self.suit}')"
     
     def __repr__(self) -> str:
@@ -86,4 +94,4 @@ class Card:
         same_suit: bool = self.suit == card.suit
         return same_value and same_suit
     def __lt__(self, card) -> bool:
-        return self.value < card.value
+        return int(self.value, 16) < int(card.value, 16)
