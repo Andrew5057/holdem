@@ -77,23 +77,21 @@ class PokerHand:
         four_of_a_kind: re.Match = re.search(r'(.)\1\1\1', self.cards_string)
         card = four_of_a_kind.group(1)
         if len(self.cards_string) == 4:
-            return f'6{card}{card}{card}{card}'
+            return int(f'7{card}{card}{card}{card}')
         for char in self.cards_string:
             if not char == card:
-                return f'6{card}{card}{card}{card}{char}'
+                return int(f'7{card}{card}{card}{card}{char}', 16)
         return None
 
     def flush(self) -> tuple[int]:
         if len(self.hearts) >= 5:
-            return int(''.join(self.hearts)[:5], 16)
+            return int('5'+''.join(self.hearts)[:5], 16)
         if len(self.diamonds) >= 5:
-            return int(''.join(self.diamonds)[:5], 16)
+            return int('5'+''.join(self.diamonds)[:5], 16)
         if len(self.clubs) >= 5:
-            return int(''.join(self.clubs)[:5], 16)
+            return int('5'+''.join(self.clubs)[:5], 16)
         if len(self.spades) >= 5:
-            return int(''.join(self.spades)[:5], 16)
-
-        pass
+            return int('5'+''.join(self.spades)[:5], 16)
     
     def straight(self) -> int:
         count = 0

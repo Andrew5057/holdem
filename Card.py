@@ -34,10 +34,7 @@ class Card:
         if rank.isnumeric():
             # Handles numeric cards' ranks and values
             self.rank: str = rank
-            self.value: int = rank
-
-            if self.value < 1 or self.value > 14:
-                raise ValueError('Numeric ranks must be between 1 and 14 inclusive.')
+            self.value: str = rank
 
             match self.value:
                 case '1':
