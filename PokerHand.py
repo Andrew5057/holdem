@@ -71,7 +71,7 @@ class PokerHand:
             else:
                 count = 0
                 high = None
-        return int('854321', 16) if (count == 4) and (14 in self.spades) else None
+        return int('854321', 16) if (count == 4) and (14 in self.spades) else 0
     
     def four_of_a_kind(self) -> int:
         four_of_a_kind: re.Match = re.search(r'(.)\1\1\1', self.cards_string)
@@ -81,7 +81,7 @@ class PokerHand:
         for char in self.cards_string:
             if not char == card:
                 return int(f'7{card}{card}{card}{card}{char}', 16)
-        return None
+        return 0
 
     def flush(self) -> tuple[int]:
         if len(self.hearts) >= 5:
@@ -107,7 +107,7 @@ class PokerHand:
                 high = None
             
         # The for loop misses bottom ace, so this checks for it.
-        return int('454321', 16) if (count == 4) and ('E' in self.cards_string) else None
+        return int('454321', 16) if (count == 4) and ('E' in self.cards_string) else 0
 
     def two_pair(self) -> int:
         two_pair: re.Match = re.search(r'(.)\1.*?(.)\2', 
@@ -120,4 +120,4 @@ class PokerHand:
                 if (not char == two_pair.group(1)) and (not char == two_pair.group(2)):
                     return int(f'2{highest}{highest}{second}{second}{char}', 16)
         
-        return None
+        return 0
