@@ -92,18 +92,15 @@ class PokerHand:
         # The for loop misses bottom ace, so this checks for it.
         return 5 if (count == 4) and ('A' in self.cards_string) else None
 
-    def two_pair(self) -> tuple[int]:
-        two_pair: re.Match = re.search(r'([2-9TJQKA]).\1.*([2-9TJQKA]).\2', 
+    def two_pair(self) -> int:
+        two_pair: re.Match = re.search(r'([2-9TJQKA])\1.*([2-9TJQKA])\2', 
                                        self.cards_string)
         if two_pair is not None:
-            highest: int = self.value_map[two_pair.group(1)]
-            second: int = self.value_map[two_pair.group(2)]
+            highest: str = two_pair.group(1)
+            second: str = two_pair.group(2)
 
             for char in self.cards_string:
-                if char in self.value_map and (not char == two_pair.group(1) and 
-                                               not char == two_pair.group(2)):
-                    kicker: int = self.value_map[char]
-
-            return (highest, second, kicker)
+                if (not char == two_pair.group(1)) and (not char == two_pair.group(2)):
+                    return int('2'+highest+second+char)
         
         return None
