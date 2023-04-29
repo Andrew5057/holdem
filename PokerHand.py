@@ -3,10 +3,6 @@ from Card import *
 import re
 
 class PokerHand:
-    value_map: dict[str: int] = {'A': 14, 'K': 13, 'Q': 12, 'J': 11,
-                                        'T': 10, '9': 9, '8': 7, '7': 7,
-                                        '6': 6, '5': 5, '4': 4, '3': 3,
-                                        '2': 2}
     def __init__(self, cards: list[Card]):
         # Cards as they get introduced, no order
         self.cards: list[Card] = cards
@@ -15,20 +11,7 @@ class PokerHand:
     
     def create_string(self) -> None:
         self.cards.sort(reverse=True)
-        self.cards_string = ''.join([card.str for card in self.cards])
-
-        self.spades: tuple[int] = tuple([self.value_map[self.cards_string[i]] for i
-                                    in range(len(self.cards_string)-1) if
-                                    self.cards_string[i+1] == 'S'])
-        self.clubs: tuple[int] = tuple([self.value_map[self.cards_string[i]] for i
-                                    in range(len(self.cards_string)-1) if
-                                    self.cards_string[i+1] == 'C'])
-        self.diamonds: tuple[int] = tuple([self.value_map[self.cards_string[i]] for i
-                                    in range(len(self.cards_string)-1) if
-                                    self.cards_string[i+1] == 'D'])
-        self.hearts: tuple[int] = tuple([self.value_map[self.cards_string[i]] for i
-                                    in range(len(self.cards_string)-1) if
-                                    self.cards_string[i+1] == 'H'])
+        self.cards_string = ''.join([card.value for card in self.cards])
     
     def straight_flush(self) -> int:
         count = 0
