@@ -38,7 +38,7 @@ class PokerHand:
             if value in self.hearts:
                 if high is None: high = value
                 count += 1
-                if count == 5: return 8, int(''.join([self.value_map[card] for card in range(high, high-6, -1)]), 16)
+                if count == 5: return 8, int(''.join([card for card in range(high, high-6, -1)]), 16)
             else:
                 count = 0
                 high = None
