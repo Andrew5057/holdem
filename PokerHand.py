@@ -3,6 +3,8 @@ from Card import *
 import re
 
 class PokerHand:
+    possible_ranks = 'EDCBA98765432'
+
     def __init__(self, cards: list[Card]):
         # Cards as they get introduced, no order
         self.cards: list[Card] = cards
@@ -67,33 +69,38 @@ class PokerHand:
         return 5 if (count == 4) and (14 in self.spades) else None
     
     def four_of_a_kind(self) -> int:
-        four_of_a_kind: re.Match = re.search(r'([2-9TJQKA]).\1.\1.\1', self.cards_string)
-        return self.value_map[four_of_a_kind.group(1)] if four_of_a_kind is not None else None
+        four_of_a_kind: re.Match = re.search(r'(.)\1\1\1', self.cards_string)
+        card = four_of_a_kind.group(1)
+        if len(self.cards_string) == 4:
+            return f'6{card}{card}{card}{card}'
+        for char in self.cards_string:
+            if not char == card:
+                return f'6{card}{card}{card}{card}{char}'
+        return None
 
     def flush(self) -> tuple[int]:
-        flush: re.Match = re.search(r'([2-9TJQKA])([HDSC]).*?([2-9TJQKA])\2.*?([2-9TJQKA])\2.*?([2-9TJQKA])\2.*?([2-9TJQKA])\2',
-                                    self.cards_string)
-        return tuple([self.value_map[rank] for rank in flush.groups() if rank not in 'HDSC']) if flush is not None else None
+        #rewrite
+        pass
     
     
     def straight(self) -> int:
         count = 0
         high = None
 
-        for rank in self.value_map:
+        for i, rank in enumerate(self.possible_ranks):
             if rank in self.cards_string:
                 if high is None: high = rank
                 count += 1
-                if count == 5: return self.value_map[high]
+                if count == 5: return int('4'+high+''.join(self.possible_ranks[i-3:i+1]), 16)
             else:
                 count = 0
                 high = None
             
         # The for loop misses bottom ace, so this checks for it.
-        return 5 if (count == 4) and ('A' in self.cards_string) else None
+        return int('454321', 16) if (count == 4) and ('E' in self.cards_string) else None
 
     def two_pair(self) -> int:
-        two_pair: re.Match = re.search(r'([2-9TJQKA])\1.*([2-9TJQKA])\2', 
+        two_pair: re.Match = re.search(r'(.)\1.*?(.)\2', 
                                        self.cards_string)
         if two_pair is not None:
             highest: str = two_pair.group(1)
@@ -101,6 +108,6 @@ class PokerHand:
 
             for char in self.cards_string:
                 if (not char == two_pair.group(1)) and (not char == two_pair.group(2)):
-                    return int('2'+highest+second+char)
+                    return int(f'2{highest}{highest}{second}{second}{char}', 16)
         
         return None
