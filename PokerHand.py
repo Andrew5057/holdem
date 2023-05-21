@@ -121,3 +121,7 @@ class PokerHand:
                     return int(f'2{highest}{highest}{second}{second}{char}', 16)
         
         return 0
+
+    def high_card(self) -> int:
+        return int(self.cards_string[:5], 16)
+
