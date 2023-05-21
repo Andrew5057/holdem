@@ -20,6 +20,13 @@ class PokerHand:
         self.clubs = tuple([card.value for card in self.cards if card.suit == 'C'])
         self.spades = tuple([card.value for card in self.cards if card.suit == 'S'])
     
+    # The following functions evaluate for the possibility of hands
+    # and will return a hexidecimal int under this pattern:
+    # Position 1: strength of hand (0=none, 1=pair, ...)
+    # Position 2-6: card values in order of importance
+    # e.g. a pair of kings with A-J-4 kickers: 1DDEB4
+    # e.g. three fives with 10-8 kickers: 555A8 
+
     def straight_flush(self) -> int:
         count = 0
         high = None
@@ -83,7 +90,7 @@ class PokerHand:
                 return int(f'7{card}{card}{card}{card}{char}', 16)
         return 0
 
-    def flush(self) -> tuple[int]:
+    def flush(self) -> int:
         if len(self.hearts) >= 5:
             return int('5'+''.join(self.hearts)[:5], 16)
         if len(self.diamonds) >= 5:
@@ -92,6 +99,7 @@ class PokerHand:
             return int('5'+''.join(self.clubs)[:5], 16)
         if len(self.spades) >= 5:
             return int('5'+''.join(self.spades)[:5], 16)
+        return 0
     
     def straight(self) -> int:
         count = 0
