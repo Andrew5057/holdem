@@ -90,6 +90,32 @@ class PokerHand:
                 return int(f'7{card}{card}{card}{card}{char}', 16)
         return 0
 
+    def full_house(self) -> int:
+        full_house_2_3: re.Match = re.search(r'(.)\1.*?(.)\2\2', self.cards_string)
+        full_house_3_2: re.Match = re.search(r'(.)\1\1.*?(.)\2', self.cards_string)
+        if (full_house_2_3 is None) and (full_house_3_2 is None):
+            return 0
+        if (full_house_2_3 is not None) and (full_house_3_2 is None):
+            high = full_house_2_3.group(2)
+            low = full_house_2_3.group(1)
+        elif (full_house_3_2 is not None) and (full_house_2_3 is None):
+            high = full_house_3_2.group(1)
+            low = full_house_3_2.group(2)
+        elif int(full_house_2_3.group(2), 16) > int(full_house_3_2.group(1), 16):
+            high = full_house_2_3.group(2)
+            low = full_house_2_3.group(1)
+        elif int(full_house_3_2.group(1), 16) > int(full_house_2_3.group(2), 16):
+            high = full_house_3_2.group(1)
+            low = full_house_3_2.group(2)
+        elif full_house_2_3.group(2) == full_house_3_2.group(1):
+            # If the two three-of-a-kinds are equal, we know the first full
+            # house is higher because its pair comes before the value while
+            # the other's pair comes after the value.
+            high = full_house_2_3.group(2)
+            low = full_house_2_3.group(1)
+        return int(f'6{high}{high}{high}{low}{low}', 16)
+
+
     def flush(self) -> int:
         if len(self.hearts) >= 5:
             return int('5'+''.join(self.hearts)[:5], 16)
