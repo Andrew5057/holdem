@@ -101,19 +101,16 @@ class PokerHand:
         elif (full_house_3_2 is not None) and (full_house_2_3 is None):
             high = full_house_3_2.group(1)
             low = full_house_3_2.group(2)
-        elif int(full_house_2_3.group(2), 16) > int(full_house_3_2.group(1), 16):
-            high = full_house_2_3.group(2)
-            low = full_house_2_3.group(1)
-        elif int(full_house_3_2.group(1), 16) > int(full_house_2_3.group(2), 16):
-            high = full_house_3_2.group(1)
-            low = full_house_3_2.group(2)
-        elif full_house_2_3.group(2) == full_house_3_2.group(1):
+        elif int(full_house_2_3.group(2), 16) >= int(full_house_3_2.group(1), 16):
             # If the two three-of-a-kinds are equal, we know the first full
             # house is higher because its pair comes before the value while
             # the other's pair comes after the value, and cards earlier in the
             # string are greater.
             high = full_house_2_3.group(2)
             low = full_house_2_3.group(1)
+        elif int(full_house_3_2.group(1), 16) > int(full_house_2_3.group(2), 16):
+            high = full_house_3_2.group(1)
+            low = full_house_3_2.group(2)
         return int(f'6{high}{high}{high}{low}{low}', 16)
 
 
