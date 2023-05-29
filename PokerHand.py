@@ -157,7 +157,8 @@ class PokerHand:
         return int('1'+threeofkind+kickers, 16)
 
     def two_pair(self) -> int:
-        two_pair: re.Match = re.search(r'(.)\1.*?(.)\2', self.cards_string)
+        two_pair: re.Match = re.search(r'(.)\1.*?(.)\2', 
+                                       self.cards_string)
         if two_pair is not None:
             highest: str = two_pair.group(1)
             second: str = two_pair.group(2)
@@ -165,7 +166,7 @@ class PokerHand:
             for char in self.cards_string:
                 if (not char == two_pair.group(1)) and (not char == two_pair.group(2)):
                     return int(f'2{highest}{highest}{second}{second}{char}', 16)
-        
+            return int(f'2{highest}{highest}{second}{second}', 16) 
         return 0
 
     def pair(self) -> int:
