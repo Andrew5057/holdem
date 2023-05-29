@@ -181,15 +181,3 @@ class PokerHand:
 
     def high_card(self) -> int:
         return int(self.cards_string[:5], 16)
-
-if __name__ == '__main__':
-    while True:
-        cards = []
-        x = input('Enter a card name: ')
-        while x != '':
-            cards.append(Card(x))
-            x = input('Enter a card name: ')
-        hand = PokerHand(cards)
-        function_name = input('Enter a function name: ')
-        print(hex(eval(f'hand.{function_name}()')))
-        print()
