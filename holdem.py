@@ -13,14 +13,17 @@ class Player:
 
 if __name__ == '__main__':
     while True:
-        cards = []
-        x = input('Enter a card name: ')
-        while x != '':
-            cards.append(Card(x))
+        try:
+            cards = []
             x = input('Enter a card name: ')
-        hand = PokerHand(cards)
-        print()
-        function_name = input('Enter a function name: ')
-        print()
-        print(str(hex(eval(f'hand.{function_name}()')))[2:])
-        print('\n-----\n')
+            while x != '':
+                cards.append(Card(x))
+                x = input('Enter a card name: ')
+            hand = PokerHand(cards)
+            print()
+            function_name = input('Enter a function name: ')
+            print()
+            print(str(hex(eval(f'hand.{function_name}()')))[2:])
+            print('\n-----\n')
+        except Exception:
+            print('\nYour input raised an error. Please try again.\n-----\n')
