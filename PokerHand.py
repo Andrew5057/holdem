@@ -182,9 +182,14 @@ class PokerHand:
     def high_card(self) -> int:
         return int(self.cards_string[:5], 16)
 
-hand = PokerHand([Card('KH'),Card('KD'),Card('3H'),Card('QS'),Card('3D'),Card('3D'),Card('KS')])
-# hand = PokerHand([Card('JH'),Card('2S')])
-print(hand.cards)
-hand.create_string()
-# print(hex(hand.pair()))
-print(hex(hand.three_of_kind()))
+if __name__ == '__main__':
+    while True:
+        cards = []
+        x = input('Enter a card name: ')
+        while x != '':
+            cards.append(Card(x))
+            x = input('Enter a card name: ')
+        hand = PokerHand(cards)
+        function_name = input('Enter a function name: ')
+        print(hex(eval(f'hand.{function_name}()')))
+        print()
