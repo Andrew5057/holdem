@@ -40,7 +40,7 @@ class PokerHand:
             else:
                 count = 0
                 high = None
-        if (count == 4) and (14 in self.hearts): return int('854321', 16)
+        if (count == 4) and ('E' in self.hearts): return int('854321', 16)
 
         count = 0
         high = None
@@ -53,7 +53,7 @@ class PokerHand:
             else:
                 count = 0
                 high = None
-        if (count == 4) and (14 in self.diamonds): return int('854321', 16)
+        if (count == 4) and ('E' in self.diamonds): return int('854321', 16)
 
         count = 0
         high = None
@@ -66,7 +66,7 @@ class PokerHand:
             else:
                 count = 0
                 high = None
-        if (count == 4) and (14 in self.clubs): return int('854321', 16)
+        if (count == 4) and ('E' in self.clubs): return int('854321', 16)
 
         count = 0
         high = None
@@ -79,7 +79,7 @@ class PokerHand:
             else:
                 count = 0
                 high = None
-        return int('854321', 16) if (count == 4) and (14 in self.spades) else 0
+        return int('854321', 16) if (count == 4) and ('E' in self.spades) else 0
     
     def four_of_a_kind(self) -> int:
         four_of_a_kind: re.Match = re.search(r'(.)\1\1\1', self.cards_string)
@@ -87,7 +87,7 @@ class PokerHand:
             return 0
         card = four_of_a_kind.group(1)
         if len(self.cards_string) == 4:
-            return int(f'7{card}{card}{card}{card}')
+            return int(f'7{card}{card}{card}{card}', 16)
         for char in self.cards_string:
             if not char == card:
                 return int(f'7{card}{card}{card}{card}{char}', 16)
