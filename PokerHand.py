@@ -40,7 +40,7 @@ class PokerHand:
             else:
                 count = 0
                 high = None
-        if (count == 4) and (14 in self.hearts): return int('854321', 16)
+        if (count == 4) and ('E' in self.hearts): return int('854321', 16)
 
         count = 0
         high = None
@@ -53,7 +53,7 @@ class PokerHand:
             else:
                 count = 0
                 high = None
-        if (count == 4) and (14 in self.diamonds): return int('854321', 16)
+        if (count == 4) and ('E' in self.diamonds): return int('854321', 16)
 
         count = 0
         high = None
@@ -66,7 +66,7 @@ class PokerHand:
             else:
                 count = 0
                 high = None
-        if (count == 4) and (14 in self.clubs): return int('854321', 16)
+        if (count == 4) and ('E' in self.clubs): return int('854321', 16)
 
         count = 0
         high = None
@@ -79,13 +79,15 @@ class PokerHand:
             else:
                 count = 0
                 high = None
-        return int('854321', 16) if (count == 4) and (14 in self.spades) else 0
+        return int('854321', 16) if (count == 4) and ('E' in self.spades) else 0
     
     def four_of_a_kind(self) -> int:
         four_of_a_kind: re.Match = re.search(r'(.)\1\1\1', self.cards_string)
+        if four_of_a_kind is None:
+            return 0
         card = four_of_a_kind.group(1)
         if len(self.cards_string) == 4:
-            return int(f'7{card}{card}{card}{card}')
+            return int(f'7{card}{card}{card}{card}', 16)
         for char in self.cards_string:
             if not char == card:
                 return int(f'7{card}{card}{card}{card}{char}', 16)
@@ -152,7 +154,7 @@ class PokerHand:
         # split[2] = substring following the three of kind
         threeofkind: str = split[1]*3
         kickers: str = (split[0]+split[2])[0:2]
-        return int('1'+threeofkind+kickers, 16)
+        return int('3'+threeofkind+kickers, 16)
 
     def two_pair(self) -> int:
         two_pair: re.Match = re.search(r'(.)\1.*?(.)\2', 
@@ -164,7 +166,7 @@ class PokerHand:
             for char in self.cards_string:
                 if (not char == two_pair.group(1)) and (not char == two_pair.group(2)):
                     return int(f'2{highest}{highest}{second}{second}{char}', 16)
-        
+            return int(f'2{highest}{highest}{second}{second}', 16) 
         return 0
 
     def pair(self) -> int:
@@ -181,10 +183,3 @@ class PokerHand:
 
     def high_card(self) -> int:
         return int(self.cards_string[:5], 16)
-
-hand = PokerHand([Card('KH'),Card('KD'),Card('3H'),Card('QS'),Card('3D'),Card('3D'),Card('KS')])
-# hand = PokerHand([Card('JH'),Card('2S')])
-print(hand.cards)
-hand.create_string()
-# print(hex(hand.pair()))
-print(hex(hand.three_of_kind()))
