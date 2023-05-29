@@ -154,7 +154,7 @@ class PokerHand:
         # split[2] = substring following the three of kind
         threeofkind: str = split[1]*3
         kickers: str = (split[0]+split[2])[0:2]
-        return int('1'+threeofkind+kickers, 16)
+        return int('3'+threeofkind+kickers, 16)
 
     def two_pair(self) -> int:
         two_pair: re.Match = re.search(r'(.)\1.*?(.)\2', 
