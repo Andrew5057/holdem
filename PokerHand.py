@@ -83,6 +83,8 @@ class PokerHand:
     
     def four_of_a_kind(self) -> int:
         four_of_a_kind: re.Match = re.search(r'(.)\1\1\1', self.cards_string)
+        if four_of_a_kind is None:
+            return 0
         card = four_of_a_kind.group(1)
         if len(self.cards_string) == 4:
             return int(f'7{card}{card}{card}{card}')
@@ -155,8 +157,7 @@ class PokerHand:
         return int('1'+threeofkind+kickers, 16)
 
     def two_pair(self) -> int:
-        two_pair: re.Match = re.search(r'(.)\1.*?(.)\2', 
-                                       self.cards_string)
+        two_pair: re.Match = re.search(r'(.)\1.*?(.)\2', self.cards_string)
         if two_pair is not None:
             highest: str = two_pair.group(1)
             second: str = two_pair.group(2)
