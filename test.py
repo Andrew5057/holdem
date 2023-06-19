@@ -1,0 +1,15 @@
+from PokerHand import *
+
+hand = PokerHand([Card('4H'),Card('4D'),Card('4C'),Card('4S'),Card('JH'),Card('JD'),Card('AH'),Card('2H')])
+# hand = PokerHand([Card('KH'),Card('KS')])
+print(hand.cards)
+hand.create_string()
+print("     High card: " + str(hex(hand.high_card())))
+print("          Pair: " + str(hex(hand.pair())))
+print("      Two pair: " + str(hex(hand.two_pair())))
+print(" Three of kind: " + str(hex(hand.three_of_kind())))
+print("      Straight: " + str(hex(hand.straight())))
+print("         Flush: " + str(hex(hand.flush())))
+print("    Full house: " + str(hex(hand.full_house())))
+print("  Four of kind: " + str(hex(hand.four_of_a_kind())))
+print("Straight flush: " + str(hex(hand.straight_flush())))
