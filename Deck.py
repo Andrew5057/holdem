@@ -16,3 +16,6 @@ class Deck:
     
     def __iter__(self):
         yield from self.cards
+    
+    def remove(self, card: Card) -> None:
+        self.cards.remove(card)
