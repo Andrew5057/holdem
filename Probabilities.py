@@ -52,6 +52,7 @@ class ProbabilityCalculator:
             if (c1 in self.community_cards) or (c2 in self.community_cards):
                 # Hands that contain a community card are impossible.
                 del self.hands[hand]
+                continue
 
             full_hand = PokerHand(self.community_cards + [c1, c2])
             self.hands[hand] = full_hand.best_hand()
