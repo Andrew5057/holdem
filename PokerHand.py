@@ -183,3 +183,35 @@ class PokerHand:
 
     def high_card(self) -> int:
         return int(self.cards_string[:5], 16)
+    
+    def best_hand(self) -> int:
+        # Find the strongest hand by testing top-down
+        test = self.straight_flush()
+        if test != 0: return test
+        test = self.four_of_a_kind()
+        if test != 0: return test
+        test = self.full_house()
+        if test != 0: return test
+        test = self.flush()
+        if test != 0: return test
+        test = self.straight()
+        if test != 0: return test
+        test = self.three_of_kind()
+        if test != 0: return test
+        test = self.two_pair()
+        if test != 0: return test
+        test = self.pair()
+        if test != 0: return test
+        return self.high_card()
+
+    @staticmethod
+    def human_readable(intval: int) -> str:
+        hexval = hex(intval)
+        # Determine if there are two cards or five
+
+        
+
+
+
+
+
