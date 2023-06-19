@@ -30,8 +30,6 @@ class ProbabilityCalculator:
             c1, c2 = hand[0], hand[1]
             self.hands[f'{c1}{c2}'] = PokerHand(Card(c1),
                                                 Card(c2)).best_hand()
-        
-        self.state = 0
 
         self.community_cards = []
         
