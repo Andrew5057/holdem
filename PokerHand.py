@@ -183,3 +183,8 @@ class PokerHand:
 
     def high_card(self) -> int:
         return int(self.cards_string[:5], 16)
+
+    def append(self, card: Card) -> None:
+        self.cards.append(card)
+        self.cards.sort(reverse=True)
+        self.create_string()
