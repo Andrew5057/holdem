@@ -75,12 +75,16 @@ class Card:
         
         self.str: str = f'{self.rank[0]}{self.suit}'
         self.repr: str = f"Card('{self.rank}{self.suit}')"
+        self.hash: int = hash(self.repr)
     
     def __repr__(self) -> str:
         return self.repr
     
     def __str__(self) -> str:
         return self.str
+    
+    def __hash__(self) -> int:
+        return self.hash
     
     # ADD: __eq__, __gt__, __lt__, 
     def  __eq__(self, card) -> bool:

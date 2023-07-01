@@ -10,6 +10,10 @@ class ProbabilityCalculator:
         '''Defines a class that calculates the probability that at least one
             player at a Texas Holdem table beats a given hand.
         
+        After instantiation, this class's instance variables should NEVER be 
+            altered or deleted, and new instance variables should NEVER be 
+            declared.
+        
         Positional arguments:
         card1 (Card): One card in the player's hand.
         card2 (Card): Another card in the player's hand.
@@ -49,10 +53,13 @@ class ProbabilityCalculator:
                                      'AH', 'AD', 'AS', 'AC']
         possible_cards.remove(str(card1))
         possible_cards.remove(str(card2))
+
         self.hands: dict[str: int] = {}
         possible_hands: tuple = combinations(possible_cards, 2)
         for hand in possible_hands:
             c1, c2 = hand[0], hand[1]
+            # Storing hand strenghts as a dictionary shortens probability 
+            # estimation time, as the strength only has to be determiend once.
             self.hands[f'{c1}{c2}'] = PokerHand([Card(c1),
                                                 Card(c2)]).best_hand()
 
@@ -80,15 +87,19 @@ class ProbabilityCalculator:
             # Catchces if duplicate cards were entered as arguments.
             raise ValueError('All arguments must be unique.')
 
+        for card in new_cards:
+            # self.player isn't part of the hands dictionary, so it has to 
+            # get updated independently.
+            self.player.append(card)
+
         self.community_cards.extend(new_cards)
         hand_list = set(self.hands.keys())
-        for card in new_cards:
-            self.player.append(card)
         
         for hand in hand_list:
             c1, c2 = Card(hand[:2]), Card(hand[2:])
             if (c1 in self.community_cards) or (c2 in self.community_cards):
-                # Hands that contain a community card are impossible.
+                # Hands that contain a community card are impossible, so they 
+                # can safely be removed from the hands dictionary.
                 del self.hands[hand]
                 continue
             full_hand = PokerHand(self.community_cards + [c1, c2])
@@ -111,6 +122,8 @@ class ProbabilityCalculator:
         if not isinstance(n, int):
             raise TypeError('Default argument n must be of type int.')
 
+        # Not copying the keys screws up the loop because dictionary items 
+        # get removed during iteration.
         possible_hands: list = self.hands.keys()
         sample_maxes: list[int] = []
         for game_sample in range(n):
