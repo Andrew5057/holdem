@@ -183,7 +183,7 @@ class PokerHand:
 
     def high_card(self) -> int:
         return int(self.cards_string[:5], 16)
-    
+      
     def best_hand(self) -> int:
         # Find the strongest hand by testing top-down
         test = self.straight_flush()
@@ -209,9 +209,8 @@ class PokerHand:
         hexval = hex(intval)
         # Determine if there are two cards or five
 
-        
-
-
-
-
+    def append(self, card: Card) -> None:
+        self.cards.append(card)
+        self.cards.sort(reverse=True)
+        self.create_string()
 
