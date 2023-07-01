@@ -213,10 +213,3 @@ class PokerHand:
     def human_readable(intval: int) -> str:
         hexval = hex(intval)
         # Determine if there are two cards or five
-
-        
-
-
-
-
-

@@ -6,12 +6,9 @@ from random import choice
 
 class ProbabilityCalculator:
 
-    def __init__(self, player_hand: list[Card]):
+    def __init__(self, card1: Card, card2: Card):
         
-        self.player: str = f'{str(player_hand[0])}{str(player_hand[1])}'
-        self.deck: Deck = Deck()
-        self.deck.remove(player_hand[0])
-        self.deck.remove(player_hand[1])
+        self.player: PokerHand = PokerHand([card1, card2])
 
         possible_cards: list[str] = ['2H', '2D', '2S', '2C', '3H', '3D', 
                                      '3S', '3C', '4H', '4D', '4S', '4C',
@@ -22,18 +19,18 @@ class ProbabilityCalculator:
                                      'JH', 'JD', 'JS', 'JC', 'QH', 'QD', 
                                      'QS', 'QC', 'KH', 'KD', 'KS', 'KC', 
                                      'AH', 'AD', 'AS', 'AC']
-        possible_cards.remove(str(player_hand[0]))
-        possible_cards.remove(str(player_hand[1]))
+        possible_cards.remove(str(card1))
+        possible_cards.remove(str(card2))
         self.hands: dict[str: int] = {}
-        possible_hands: tuple = combinations(self.possible_cards, 2)
+        possible_hands: tuple = combinations(possible_cards, 2)
         for hand in possible_hands:
             c1, c2 = hand[0], hand[1]
-            self.hands[f'{c1}{c2}'] = PokerHand(Card(c1),
-                                                Card(c2)).best_hand()
+            self.hands[f'{c1}{c2}'] = PokerHand([Card(c1),
+                                                Card(c2)]).best_hand()
 
         self.community_cards: list[Card] = []
         
-    def community(self, *new_cards: Card) -> None:
+    def add_community(self, *new_cards: Card) -> None:
         '''Updates the ProbabilityCalculator to include new community_cards.
             Removes newly impossible hands accordingly. Also updates best_hand
             values for each hand in the hands dictionary.
@@ -44,25 +41,27 @@ class ProbabilityCalculator:
         
         Output: None
         '''
-
         self.community_cards.extend(new_cards)
+        hand_list = set(self.hands.keys())
+        for card in new_cards:
+            self.player.append(card)
         
-        for hand in self.hands:
+        for hand in hand_list:
             c1, c2 = Card(hand[:2]), Card(hand[2:])
             if (c1 in self.community_cards) or (c2 in self.community_cards):
                 # Hands that contain a community card are impossible.
                 del self.hands[hand]
                 continue
-
             full_hand = PokerHand(self.community_cards + [c1, c2])
             self.hands[hand] = full_hand.best_hand()
-    def estimate(self, opponents:int=8, n:int=1000) -> float:
+    def estimate(self, opponents:int=8, n:int=10000) -> float:
         '''Estimates the probability that at least one person has a hand
             better than the player's.
         
         Arguments:
         opponents (int): The number of other players in play. Defaults to 8.
-        n (int): The number of random samples used for estimation  
+        n (int): The number of random samples used for estimation. Defaults to
+            10,000
 
         Output: float in [0, 1] representing the estimated probability that
         at least one opponent has a hand better than the player's.
@@ -80,6 +79,6 @@ class ProbabilityCalculator:
                                                (new_hand[2:] not in hand)]
                 game_strengths.append(self.hands[new_hand])
             sample_maxes.append(max(game_strengths))
-        num_better = len([game for game in sample_maxes if game > self.hands[self.player]])
+        num_better = len([game for game in sample_maxes if game > self.player.best_hand()])
         num_games = len(sample_maxes)
         return num_better/num_games
