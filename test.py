@@ -4,6 +4,8 @@ hand = PokerHand([Card('4H'),Card('4D'),Card('4C'),Card('4S'),Card('JH'),Card('J
 # hand = PokerHand([Card('KH'),Card('KS')])
 print(hand.cards)
 hand.create_string()
+print("     Best hand: " + str(hex(hand.best_hand())))
+print("")
 print("     High card: " + str(hex(hand.high_card())))
 print("          Pair: " + str(hex(hand.pair())))
 print("      Two pair: " + str(hex(hand.two_pair())))
