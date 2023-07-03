@@ -1,5 +1,4 @@
-from holdem import *
-from Card import *
+from Card import Card
 import re
 
 class PokerHand:
