@@ -4,6 +4,8 @@ from PokerHand import PokerHand
 from itertools import combinations
 from random import choice
 
+# human_readable returns [(pair, two_pair, ...), (card ranks)]
+
 class ProbabilityCalculator:
 
     def __init__(self, card1: Card, card2: Card):
@@ -112,7 +114,7 @@ class ProbabilityCalculator:
         Arguments:
         opponents (int): The number of other players in play. Defaults to 8.
         n (int): The number of random samples used for estimation. Defaults to
-            10,000
+            10,000.
 
         Output: float in [0, 1] representing the estimated probability that
         at least one opponent has a hand better than the player's.
@@ -137,5 +139,77 @@ class ProbabilityCalculator:
                 game_strengths.append(self.hands[new_hand])
             sample_maxes.append(max(game_strengths))
         num_better = len([game for game in sample_maxes if game > self.player.best_hand()])
-        num_games = len(sample_maxes)
-        return num_better/num_games
+
+        return num_better/n
+    
+    def estimate_chart(self, opponents:int=8, n:int=10000) -> dict:
+        '''Estimates the probability that each type of the hand is the 
+            strongest at the table, excluding the player's.
+        
+        Arguments:
+        opponents (int): The number of other players in play. Defaults to 8.
+        n (int): The number of random samples used for estimation. Defaults to
+            10,000.
+        
+        Output: Dictionary in which the name of each type of hand is the key 
+            and the probability of it being the strongest at the table is the 
+            value. Also includes key/value pairs for "the player's hand but 
+            stronger" and "the player's hand but weaker".
+        '''
+        if not isinstance(opponents, int):
+            raise TypeError('Default argument opponents must be of type int.')
+        if not isinstance(n, int):
+            raise TypeError('Default argument n must be of type int.')
+
+        # Not copying the keys screws up the loop because dictionary items 
+        # get removed during iteration.
+        possible_hands: list = self.hands.keys()
+        straight_flushes: list[int] = []
+        four_of_a_kinds: list[int] = []
+        full_houses: list[int] = []
+        flushes: list[int] = []
+        straights: list[int] = []
+        three_of_a_kinds: list[int] = []
+        two_pairs: list[int] = []
+        pairs: list[int] = []
+        high_cards: list[int] = []
+
+        for game_sample in range(n):
+            game_strengths: list[int] = []
+            compatible_hands: list[str] = list(possible_hands)
+            for opponent in range(opponents):
+                new_hand = choice(compatible_hands)
+                compatible_hands: list[str] = [hand for hand in compatible_hands
+                                               if (new_hand[:2] not in hand) and
+                                               (new_hand[2:] not in hand)]
+                game_strengths.append(self.hands[new_hand])
+            
+            top = max(game_strengths)
+            # Gets the first digit of the best hand
+            hand_type = top // 1048576
+            match hand_type:
+                case 0: high_cards.append(top)
+                case 1: pairs.append(top)
+                case 2: two_pairs.append(top)
+                case 3: three_of_a_kinds.append(top)
+                case 4: straights.append(top)
+                case 5: flushes.append(top)
+                case 6: full_houses.append(top)
+                case 7: four_of_a_kinds.append(top)
+                case 8: straight_flushes.append(top)
+        
+        probabilities = {
+            'Straight Flush': len(straight_flushes) / n, 
+            'Four of a Kind': len(straight_flushes) / n, 
+            'Full House': len(straight_flushes) / n, 
+            'Flush': len(straight_flushes) / n, 
+            'Straight': len(straight_flushes) / n, 
+            'Three of a Kind': len(straight_flushes) / n, 
+            'Two Pair': len(straight_flushes) / n, 
+            'Pair': len(straight_flushes) / n, 
+            'High Card': len(straight_flushes) / n
+        }
+
+        return probabilities
+
+        # ADD HAND BUT HIGHER AND HAND BUT LOWER
