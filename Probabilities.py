@@ -3,12 +3,25 @@ from Deck import Deck
 from PokerHand import PokerHand
 from itertools import combinations
 from random import choice
+import pandas as pd
 
 # human_readable returns [(pair, two_pair, ...), (card ranks)]
 
 class ProbabilityCalculator:
+    # For sorting pandas dataframes
+    hand_type_indexes = {
+        'High Card': 8,
+        'Pair': 7,
+        'Two Pair': 6,
+        'Three of a Kind': 5,
+        'Straight': 4,
+        'Flush': 3,
+        'Full House': 2,
+        'Four of a Kind': 1,
+        'Straight Flush': 0
+    }
 
-    def __init__(self, card1: Card, card2: Card):
+    def __init__(self, card1: Card, card2: Card, opponents:int=8):
         '''Defines a class that calculates the probability that at least one
             player at a Texas Holdem table beats a given hand.
         
@@ -30,6 +43,9 @@ class ProbabilityCalculator:
             (including community cards), as defined by the PokerHand class.
         community_cards: A continuously updated list representing community
             cards.
+        opponents (int): The number of other players in play. Defaults to 8.
+        n (int): The number of random samples used for estimation. Defaults to
+            10,000.
 
         Methods:
         add_community: Adds cards to the instance's community cards.
@@ -43,6 +59,10 @@ class ProbabilityCalculator:
             raise TypeError('Positional variable card2 must be of type Card.')
 
         self.player: PokerHand = PokerHand([card1, card2])
+
+        if not isinstance(opponents, int):
+            raise TypeError('Optional variable opponents must be of type int.')
+        self.opponents = opponents
 
         possible_cards: list[str] = ['2H', '2D', '2S', '2C', '3H', '3D', 
                                      '3S', '3C', '4H', '4D', '4S', '4C',
@@ -107,22 +127,17 @@ class ProbabilityCalculator:
             full_hand = PokerHand(self.community_cards + [c1, c2])
             self.hands[hand] = full_hand.best_hand()
     
-    def estimate(self, opponents:int=8, n:int=10000) -> float:
+    def estimate(self, n:int=10000) -> float:
         '''Estimates the probability that at least one person has a hand
             better than the player's.
         
         Arguments:
-        opponents (int): The number of other players in play. Defaults to 8.
-        n (int): The number of random samples used for estimation. Defaults to
-            10,000.
+        n (int): The number of simulations to use in the estimate. Defaults to
+            10000.
 
         Output: float in [0, 1] representing the estimated probability that
-        at least one opponent has a hand better than the player's.
+        every opponent has a hand weaker than the player's.
         '''
-        if not isinstance(opponents, int):
-            raise TypeError('Default argument opponents must be of type int.')
-        if not isinstance(n, int):
-            raise TypeError('Default argument n must be of type int.')
 
         # Not copying the keys screws up the loop because dictionary items 
         # get removed during iteration.
@@ -131,53 +146,52 @@ class ProbabilityCalculator:
         for game_sample in range(n):
             game_strengths: list[int] = []
             compatible_hands: list[str] = list(possible_hands)
-            for opponent in range(opponents):
+            for opponent in range(self.opponents):
                 new_hand = choice(compatible_hands)
                 compatible_hands: list[str] = [hand for hand in compatible_hands
                                                if (new_hand[:2] not in hand) and
                                                (new_hand[2:] not in hand)]
                 game_strengths.append(self.hands[new_hand])
             sample_maxes.append(max(game_strengths))
-        num_better = len([game for game in sample_maxes if game > self.player.best_hand()])
+        num_better = len([game for game in sample_maxes if game < self.player.best_hand()])
 
         return num_better/n
     
-    def estimate_chart(self, opponents:int=8, n:int=10000) -> dict:
+    def estimate_chart(self, n:int=10000) -> dict:
         '''Estimates the probability that each type of the hand is the 
             strongest at the table, excluding the player's.
         
         Arguments:
-        opponents (int): The number of other players in play. Defaults to 8.
-        n (int): The number of random samples used for estimation. Defaults to
-            10,000.
+        n (int): The number of simulations to use in the estimate. Defaults to
+            10000.
         
         Output: Dictionary in which the name of each type of hand is the key 
             and the probability of it being the strongest at the table is the 
             value. Also includes key/value pairs for "the player's hand but 
             stronger" and "the player's hand but weaker".
         '''
-        if not isinstance(opponents, int):
-            raise TypeError('Default argument opponents must be of type int.')
-        if not isinstance(n, int):
-            raise TypeError('Default argument n must be of type int.')
-
+        
         # Not copying the keys screws up the loop because dictionary items 
         # get removed during iteration.
         possible_hands: list = self.hands.keys()
-        straight_flushes: list[int] = []
-        four_of_a_kinds: list[int] = []
-        full_houses: list[int] = []
-        flushes: list[int] = []
-        straights: list[int] = []
-        three_of_a_kinds: list[int] = []
-        two_pairs: list[int] = []
-        pairs: list[int] = []
-        high_cards: list[int] = []
+
+        hand_types = {
+            'Straight Flush': [],
+            'Four of a Kind': [],
+            'Full House': [],
+            'Flush': [],
+            'Straight': [],
+            'Three of a Kind': [],
+            'Two Pair': [],
+            'Pair': [],
+            'High Card': []
+        }
+        
 
         for game_sample in range(n):
             game_strengths: list[int] = []
             compatible_hands: list[str] = list(possible_hands)
-            for opponent in range(opponents):
+            for opponent in range(self.opponents):
                 new_hand = choice(compatible_hands)
                 compatible_hands: list[str] = [hand for hand in compatible_hands
                                                if (new_hand[:2] not in hand) and
@@ -185,31 +199,57 @@ class ProbabilityCalculator:
                 game_strengths.append(self.hands[new_hand])
             
             top = max(game_strengths)
+
             # Gets the first digit of the best hand
-            hand_type = top // 1048576
+            if len(self.community_cards) == 0:
+                hand_type = top // 256
+            else:
+                hand_type = top // 1048576
             match hand_type:
-                case 0: high_cards.append(top)
-                case 1: pairs.append(top)
-                case 2: two_pairs.append(top)
-                case 3: three_of_a_kinds.append(top)
-                case 4: straights.append(top)
-                case 5: flushes.append(top)
-                case 6: full_houses.append(top)
-                case 7: four_of_a_kinds.append(top)
-                case 8: straight_flushes.append(top)
+                case 0: hand_types['High Card'].append(top)
+                case 1: hand_types['Pair'].append(top)
+                case 2: hand_types['Two Pair'].append(top)
+                case 3: hand_types['Three of a Kind'].append(top)
+                case 4: hand_types['Straight'].append(top)
+                case 5: hand_types['Flush'].append(top)
+                case 6: hand_types['Full House'].append(top)
+                case 7: hand_types['Four of a Kind'].append(top)
+                case 8: hand_types['Straight Flush'].append(top)
         
-        probabilities = {
-            'Straight Flush': len(straight_flushes) / n, 
-            'Four of a Kind': len(straight_flushes) / n, 
-            'Full House': len(straight_flushes) / n, 
-            'Flush': len(straight_flushes) / n, 
-            'Straight': len(straight_flushes) / n, 
-            'Three of a Kind': len(straight_flushes) / n, 
-            'Two Pair': len(straight_flushes) / n, 
-            'Pair': len(straight_flushes) / n, 
-            'High Card': len(straight_flushes) / n
-        }
+        hand_counts = {hand_name: len(hand_types[hand_name]) for hand_name in hand_types}
+        types_frame: pd.DataFrame = pd.DataFrame.from_dict(hand_counts, orient='index')
+        types_frame.reset_index(inplace=True)
+        types_frame.columns = 'Hand', 'Count'
 
-        return probabilities
+        player_strength: int = self.player.best_hand()
+        player_hand_type = player_strength // 1048576
+        match player_hand_type:
+            case 0: player_hand_type = 'High Card'
+            case 1: player_hand_type = 'Pair'
+            case 2: player_hand_type = 'Two Pair'
+            case 3: player_hand_type = 'Three of a Kind'
+            case 4: player_hand_type = 'Straight'
+            case 5: player_hand_type = 'Flush'
+            case 6: player_hand_type = 'Full House'
+            case 7: player_hand_type = 'Four of a Kind'
+            case 8: player_hand_type = 'Straight Flush'
+        
+        index_high: int = self.hand_type_indexes[player_hand_type]-0.5
+        index_low: int = self.hand_type_indexes[player_hand_type]+0.5
 
-        # ADD HAND BUT HIGHER AND HAND BUT LOWER
+        types_frame.loc[index_high] = f'{player_hand_type} (High)', 0
+        types_frame.loc[index_low] = f'{player_hand_type} (Low)', 0
+        
+        for hand_strength in hand_types[player_hand_type]:
+            if hand_strength > player_strength:
+                types_frame.at[index_high, 'Count'] += 1
+            elif hand_strength < player_strength:
+                types_frame.at[index_low, 'Count'] += 1
+        types_frame.drop(self.hand_type_indexes[player_hand_type], inplace=True)
+
+        types_frame['Probability'] = types_frame['Count'].map(lambda count: count/n)
+        types_frame.drop('Count', axis=1, inplace=True)
+
+        types_frame.reset_index(drop=True, inplace=True)
+
+        return types_frame
