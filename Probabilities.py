@@ -82,7 +82,7 @@ class ProbabilityCalculator:
             # Storing hand strenghts as a dictionary shortens probability 
             # estimation time, as the strength only has to be determiend once.
             self.hands[f'{c1}{c2}'] = PokerHand([Card(c1),
-                                                Card(c2)]).best_hand()
+                                                Card(c2)]).best_hand()['value']
 
         self.community_cards: list[Card] = []
         
@@ -124,7 +124,7 @@ class ProbabilityCalculator:
                 del self.hands[hand]
                 continue
             full_hand = PokerHand(self.community_cards + [c1, c2])
-            self.hands[hand] = full_hand.best_hand()
+            self.hands[hand] = full_hand.best_hand()['level']
     
     def estimate(self, n:int=10000) -> float:
         '''Estimates the probability that at least one person has a hand
@@ -152,7 +152,7 @@ class ProbabilityCalculator:
                                                (new_hand[2:] not in hand)]
                 game_strengths.append(self.hands[new_hand])
             sample_maxes.append(max(game_strengths))
-        num_better = len([game for game in sample_maxes if game < self.player.best_hand()])
+        num_better = len([game for game in sample_maxes if game < self.player.best_hand()['level']])
 
         return num_better/n
     
@@ -220,7 +220,7 @@ class ProbabilityCalculator:
         types_frame.reset_index(inplace=True)
         types_frame.columns = 'Hand', 'Count'
 
-        player_strength: int = self.player.best_hand()
+        player_strength: int = self.player.best_hand()['level']
         player_hand_type = player_strength // 1048576
         match player_hand_type:
             case 0: player_hand_type = 'High Card'
