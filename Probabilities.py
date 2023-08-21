@@ -29,7 +29,7 @@ class ProbabilityCalculator:
         for hand in possible_hands:
             c1, c2 = hand[0], hand[1]
             self.hands[f'{c1}{c2}'] = PokerHand(Card(c1),
-                                                Card(c2)).best_hand()
+                                                Card(c2)).best_hand()['value']
 
         self.community_cards = []
         
@@ -55,5 +55,5 @@ class ProbabilityCalculator:
                 continue
 
             full_hand = PokerHand(self.community_cards + [c1, c2])
-            self.hands[hand] = full_hand.best_hand()
+            self.hands[hand] = full_hand.best_hand()['value']
     
