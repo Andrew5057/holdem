@@ -22,7 +22,7 @@ class ProbabilityCalculator:
 
     def __init__(self, card1: Card, card2: Card, opponents:int=8):
         '''Defines a class that calculates the probability that at least one
-            player at a Texas Holdem table beats a given hand.
+            player a[t a Texas Holdem table beats a given hand.
         
         After instantiation, this class's instance variables should NEVER be 
             altered or deleted, and new instance variables should NEVER be 
@@ -124,7 +124,7 @@ class ProbabilityCalculator:
                 del self.hands[hand]
                 continue
             full_hand = PokerHand(self.community_cards + [c1, c2])
-            self.hands[hand] = full_hand.best_hand()['level']
+            self.hands[hand] = full_hand.best_hand()['value']
     
     def estimate(self, n:int=10000) -> float:
         '''Estimates the probability that at least one person has a hand
@@ -152,7 +152,7 @@ class ProbabilityCalculator:
                                                (new_hand[2:] not in hand)]
                 game_strengths.append(self.hands[new_hand])
             sample_maxes.append(max(game_strengths))
-        num_better = len([game for game in sample_maxes if game < self.player.best_hand()['level']])
+        num_better = len([game for game in sample_maxes if game < self.player.best_hand()['value']])
 
         return num_better/n
     
@@ -200,6 +200,7 @@ class ProbabilityCalculator:
             top = max(game_strengths)
 
             # Gets the first digit of the best hand
+            # Using the builtin is probably faster but needs some refactoring
             if len(self.community_cards) == 0:
                 hand_type = top // 256
             else:
