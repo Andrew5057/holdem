@@ -187,27 +187,45 @@ class PokerHand:
     def best_hand(self) -> int:
         # Find the strongest hand by testing top-down
         test = self.straight_flush()
-        if test != 0: return test
+        if test != 0: return {"level": 8, "value": test}
         test = self.four_of_a_kind()
-        if test != 0: return test
+        if test != 0: return {"level": 7, "value": test}
         test = self.full_house()
-        if test != 0: return test
+        if test != 0: return {"level": 6, "value": test}
         test = self.flush()
-        if test != 0: return test
+        if test != 0: return {"level": 5, "value": test}
         test = self.straight()
-        if test != 0: return test
+        if test != 0: return {"level": 4, "value": test}
         test = self.three_of_kind()
-        if test != 0: return test
+        if test != 0: return {"level": 3, "value": test}
         test = self.two_pair()
-        if test != 0: return test
+        if test != 0: return {"level": 2, "value": test}
         test = self.pair()
-        if test != 0: return test
-        return self.high_card()
+        if test != 0: return {"level": 1, "value": test}
+        return {"level": 0, "value": self.high_card()}
 
     @staticmethod
-    def human_readable(intval: int) -> str:
-        hexval = hex(intval)
-        # Determine if there are two cards or five
+    def human_readable_level(level: int):
+        return ["High Hand",
+                "Pair",
+                "Two Pair",
+                "Three Of Kind",
+                "Straight",
+                "Full House",
+                "Four Of Kind",
+                "Straight Flush"][level]
+
+    @staticmethod
+    def human_readable_cards(intval: int):
+        # Determine number of cards. Only options are 2 or 5
+        ncards = 2 if intval < 0x11111 else 5
+        cards = ""
+        # Look at digits "right-to'left" and convert to cards
+        for i in range(ncards):
+            cards = '-A23456789TJQKA'[intval % 16] + cards
+            intval = int(intval/16)
+        # Remaining digit should be the class of hand
+        return cards
 
     def append(self, card: Card) -> None:
         self.cards.append(card)
