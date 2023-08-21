@@ -1,17 +1,91 @@
-from holdem import *
-from Card import *
+from Card import Card
 import re
 
 class PokerHand:
     possible_ranks = 'EDCBA98765432'
 
     def __init__(self, cards: list[Card]):
+        '''Defines 
+
+        Class variables:
+        possible_ranks (str): 'EDCBA98765432'. Represents the hexadecimal 
+            values of the cards 2-A in descending order.
+
+        Instance variables:
+        cards (list[Card]): The cards, represented as Card objects, that make 
+            up the hand. Should include community cards.
+        cards_string (str): A string containing the hexadecimal values of the
+            cards in the hand in descending order.
+        hearts (tuple[str]): A list containing the hexadecimal values of the 
+            heart cards in the hand in descending order.
+        diamonds (tuple[str]): A list containing the hexadecimal values of the 
+            diamond cards in the hand in descending order.
+        clubs (tuple[str]): A list containing the hexadecimal values of the 
+            club cards in the hand in descending order.
+        spades (tuple[str]): A list containing the hexadecimal values of the 
+            spade cards in the hand in descending order.
+        
+        Static methods:
+        human_readable: Converts an int to _______________
+
+        Instance methods:
+        create_string: Initializes or modifies the cards_string, hearts, 
+            diamonds, clubs, and spades variables.
+        straight_flush: Determines whether a straight flush is present in the 
+            hand and, if so, returns a hexadecimal int representing its 
+            strength.
+        four_of_a_kind: Determines whether a four of a kind is present in the 
+            hand and, if so, returns a hexadecimal int representing its 
+            strength.
+        straight_flush: Determines whether a straight flush is present in the 
+            hand and, if so, returns a hexadecimal int representing its 
+            strength.
+        full_house: Determines whether a full house is present in the hand 
+            and, if so, returns a hexadecimal int representing its strength.
+        flush: Determines whether a flush is present in the hand and, if so, 
+            returns a hexadecimal int representing its strength.
+        straight: Determines whether a straight is present in the hand and, 
+            if so, returns a hexadecimal int representing its strength.
+        three_of_kind: Determines whether a three of a kind is present in the 
+            hand and, if so, returns a hexadecimal int representing its 
+            strength.
+        two_pair: Determines whether a two pair is present in the hand and, 
+            if so, returns a hexadecimal int representing its strength.
+        pair: Determines whether a pair is present in the hand and, if so, 
+            returns a hexadecimal int representing its strength.
+        high_card: Determines the strength of the hand, assuming that it 
+            contains no special hands.
+        best_hand: Determines the strength of the hand as a six-digit
+            hexadecimal int.
+        '''
         # Cards as they get introduced, no order
         self.cards: list[Card] = cards
         self.cards.sort(reverse=True)
         self.create_string()
     
     def create_string(self) -> None:
+        '''Mutates the cards_string, hearts, diamonds, clubs, and spades 
+            variables to list the hexadecimal values of each card in 
+            descending order of strength.
+        
+        Example:
+            hand = PokerHand([Card('5D'), Card('QH'), Card('6S'), Card('3D')])
+            hand.create_string()
+            hand.cards_string
+                -> 'C653'
+            hand.hearts
+                -> ('C',)
+            hand.diamonds
+                -> ('5', '3')
+            hand.clubs
+                -> ()
+            hand.spades
+                -> ('6',)
+
+        Arguments: None
+        
+        Output: None
+        '''
         self.cards.sort(reverse=True)
         self.cards_string = ''.join([card.value for card in self.cards])
 
@@ -21,11 +95,11 @@ class PokerHand:
         self.spades = tuple([card.value for card in self.cards if card.suit == 'S'])
     
     # The following functions evaluate for the possibility of hands
-    # and will return a hexidecimal int under this pattern:
+    # and will return a hexadecimal int under this pattern:
     # Position 1: strength of hand (0=none, 1=pair, ...)
     # Position 2-6: card values in order of importance
-    # e.g. a pair of kings with A-J-4 kickers: 1DDEB4
-    # e.g. three fives with 10-8 kickers: 555A8 
+    # e.g. a pair of kings with A-J-4 kickers: 0x1DDEB4
+    # e.g. three fives with 10-8 kickers: 0x555A8 
     # If hand not found, will return 0
 
     def straight_flush(self) -> int:
@@ -231,4 +305,3 @@ class PokerHand:
         self.cards.append(card)
         self.cards.sort(reverse=True)
         self.create_string()
-
