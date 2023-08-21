@@ -221,8 +221,11 @@ class ProbabilityCalculator:
         types_frame.reset_index(inplace=True)
         types_frame.columns = 'Hand', 'Count'
 
-        player_strength: int = self.player.best_hand()['level']
-        player_hand_type = player_strength // 1048576
+        player_strength: int = self.player.best_hand()['value']
+        if len(self.player.cards) == 2:
+            player_hand_type = player_strength // 256
+        else:
+            player_hand_type = player_strength // 1048576
         match player_hand_type:
             case 0: player_hand_type = 'High Card'
             case 1: player_hand_type = 'Pair'
