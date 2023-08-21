@@ -1,5 +1,4 @@
 from Card import Card
-from Deck import Deck
 from PokerHand import PokerHand
 from itertools import combinations
 from random import choice
