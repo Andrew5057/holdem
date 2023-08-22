@@ -253,6 +253,6 @@ class ProbabilityCalculator:
         types_frame['Probability'] = types_frame['Count'].map(lambda count: count/n)
         types_frame.drop('Count', axis=1, inplace=True)
 
-        types_frame.reset_index(drop=True, inplace=True)
+        types_frame.sort_index(axis=0, inplace=True, ignore_index=True)
 
         return types_frame
