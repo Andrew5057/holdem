@@ -96,6 +96,20 @@ class ProbabilityCalculator:
         for card in new_cards:
             self.deck.remove(card)
     
+    def draw_community(self, num_cards: int):
+        '''Draws cards from the deck and adds them to the community cards. Drawn cards are removed from the deck.
+
+        Positional arguments:
+        num_cards(int): The number of cards to draw.
+
+        Output: None
+        '''
+
+        
+
+        cards_to_add: tuple[Card] = self.deck.draw(num_cards)
+        self.community_cards.extend(cards_to_add)
+    
     def estimate(self, n:int=10000, percentage:bool=False) -> float:
         """Estimates the probability that at least one person has a hand
             better than the player"s.
