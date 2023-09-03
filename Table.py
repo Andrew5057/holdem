@@ -57,6 +57,7 @@ class Table:
             raise ValueError("opponents must be greater than 1.")
 
         self.deck: Deck = Deck()
+        self.deck.shuffle()
         self.player: list[Card] = list(self.deck.draw(2))
         self.opponents: int = opponents
         self.community_cards: list[Card] = []
@@ -91,6 +92,7 @@ class Table:
         self.player: list[Card] = [card1, card2]
         self.opponents = opponents
         self.deck: Deck = Deck()
+        self.deck.shuffle()
         self.deck.remove(card1)
         self.deck.remove(card2)
         self.community_cards: list[Card] = []
@@ -244,5 +246,6 @@ class Table:
         types_frame["Probability"] = types_frame["Count"].map(lambda count: count/n)
         types_frame.drop("Count", axis=1, inplace=True)
         types_frame["Percent Chance"] = types_frame["Probability"].map(lambda prob: prob*100)
+        types_frame.sort_index(inplace=True, ignore_index=True)
 
         return types_frame
