@@ -75,12 +75,8 @@ class Card:
         
         self.str: str = f'{self.rank[0]}{self.suit}'
         self.repr: str = f"Card('{self.rank}{self.suit}')"
-<<<<<<< Updated upstream
         self.hash: int = hash(self.repr)
     
-=======
-
->>>>>>> Stashed changes
     def __repr__(self) -> str:
         return self.repr
     
