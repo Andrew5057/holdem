@@ -258,7 +258,7 @@ class PokerHand:
     def high_card(self) -> int:
         return int(self.cards_string[:5], 16)
       
-    def best_hand(self) -> int:
+    def best_hand(self) -> dict:
         # Find the strongest hand by testing top-down
         test = self.straight_flush()
         if test != 0: return {"level": 8, "value": test}
