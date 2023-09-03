@@ -75,8 +75,12 @@ class Card:
         
         self.str: str = f'{self.rank[0]}{self.suit}'
         self.repr: str = f"Card('{self.rank}{self.suit}')"
+<<<<<<< Updated upstream
         self.hash: int = hash(self.repr)
     
+=======
+
+>>>>>>> Stashed changes
     def __repr__(self) -> str:
         return self.repr
     
@@ -96,3 +100,70 @@ class Card:
         return same_value and same_suit
     def __lt__(self, card) -> bool:
         return int(self.value, 16) < int(card.value, 16)
+    
+    @staticmethod
+    def ascii_art(card):
+        if card.rank == "T":
+            upper_left = lower_right = "10"
+        else:
+            upper_left = card.rank + " "
+            lower_right = " " + card.rank
+        match card.suit:
+            case 'C':
+                return [" ______________ ",
+                        "| {}           |".format(upper_left),
+                        "|      __      |",
+                        "|     /  \     |",
+                        "|    _\  /_    |",
+                        "|   /      \   |",
+                        "|   \__/\__/   |",
+                        "|      ||      |",
+                        "|           {} |".format(lower_right),
+                        "|______________|"]
+            case 'S':
+                return [" ______________ ",
+                        "| {}           |".format(upper_left),
+                        "|              |",
+                        "|      /\      |",
+                        "|     /  \     |",
+                        "|    /    \    |",
+                        "|    \____/    |",
+                        "|      ||      |",
+                        "|           {} |".format(lower_right),
+                        "|______________|"]
+            case 'D':
+                return [" ______________ ",
+                        "| {}           |".format(upper_left),
+                        "|      /\      |",
+                        "|     /  \     |",
+                        "|    /    \    |",
+                        "|    \    /    |",
+                        "|     \  /     |",
+                        "|      \/      |",
+                        "|           {} |".format(lower_right),
+                        "|______________|"]
+            case 'H':
+                return [" ______________ ",
+                        "| {}           |".format(upper_left),
+                        "|    __  __    |",
+                        "|   /  \/  \   |",
+                        "|   \      /   |",
+                        "|    \    /    |",
+                        "|     \  /     |",
+                        "|      \/      |",
+                        "|           {} |".format(lower_right),
+                        "|______________|"]
+            case _:
+                return [""]*10
+
+    @staticmethod
+    def print_cards(cards: list):
+        # Convert cards to ascii art
+        ascii_cards = [Card.ascii_art(i) for i in cards]
+        # Line up cards horizontally
+        ascii_cards = [" ".join(row) for row in zip(*ascii_cards)]
+        # Add line breaks and print
+        print("\n".join(ascii_cards))
+        # Print one more line break to finish
+        print("")
+
