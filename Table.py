@@ -2,12 +2,12 @@ from Card import Card
 from PokerHand import PokerHand
 from Deck import Deck
 from itertools import combinations
-from random import choice
+import random
 import pandas as pd
 
 # human_readable returns [(pair, two_pair, ...), (card ranks)]
 
-class ProbabilityCalculator:
+class Table:
     # For sorting pandas dataframes in the estimate_chart() method
     hand_type_indexes = {
         "High Card": 8,
@@ -21,24 +21,20 @@ class ProbabilityCalculator:
         "Straight Flush": 0
     }
 
-    def __init__(self, card1: Card, card2: Card, opponents:int=8):
-        """Defines a class that calculates the probability that at least one
-            player a[t a Texas Holdem table beats a given hand.
+    def __init__(self, opponents:int=8):
+        """Defines a class that simulates & analyzes games of Texas
+            Holdem
         
-        After instantiation, this class"s instance variables should NEVER be 
-            altered or deleted, and new instance variables should NEVER be 
+        After instantiation, this class's instance variables should not be 
+            altered or deleted, and new instance variables should not be 
             declared.
-        
-        Positional arguments:
-        card1 (Card): One card in the player"s hand.
-        card2 (Card): Another card in the player"s hand.
 
         Optional arguments:
         opponents (int): The number of opponents at the table. Does not 
             include the player. Defaults to 8.
         
         Instance variables:
-        player (list): A list object representing the player"s  hand, not 
+        player (list): A list object representing the player's  hand, not 
             including community cards.
         community_cards (list): A continuously updated list representing 
             community cards.
@@ -49,17 +45,46 @@ class ProbabilityCalculator:
             10,000.
 
         Methods:
+        new_game: Re-initializes the table with random cards.
         add_community: Adds cards to the instance's community cards.
         estimate: Uses random sampling to estimate the probability of at 
             least one player at the table beating the player's hand.
         """
+        # Sanity check
+        if not isinstance(opponents, int):
+            raise TypeError("opponents must be of type int.")
+        if opponents < 1:
+            raise ValueError("opponents must be greater than 1.")
 
+        self.deck: Deck = Deck()
+        self.player: list[Card] = list(self.deck.draw(2))
+        self.opponents: int = opponents
+        self.community_cards: list[Card] = []
+
+    def new_game(self, opponents: int = 8):
+        '''Re-initizalizes the table. Uses an alternative name for user 
+            friendliness.
+        
+        Positional arguments:
+        opponents (int): The number of opponents at the table. Defaults to 8.
+        '''
+        self.__init__(opponents)
+
+    def manual_game(self, card1: Card, card2: Card, opponents: int = 8):
+        '''Re-initializes the table with a user-defined player hand.
+        
+        Positional arguments:
+        card1 (Card): One card in the player's hand.
+        card2 (Card): Another card in the player's hand.
+        opponents (int): The number of opponents at the table. Defaults to 8.
+
+        Output: None
+        '''
         # Sanity checks
         if not isinstance(card1, Card):
             raise TypeError("Positional variable card1 must be of type Card.")
         if not isinstance(card2, Card):
             raise TypeError("Positional variable card2 must be of type Card.")
-
         if not isinstance(opponents, int):
             raise TypeError("Optional variable opponents must be of type int.")
 
@@ -69,6 +94,7 @@ class ProbabilityCalculator:
         self.deck.remove(card1)
         self.deck.remove(card2)
         self.community_cards: list[Card] = []
+
         
     def add_community(self, *new_cards: Card) -> None:
         """Updates the ProbabilityCalculator to include new community_cards.
@@ -105,63 +131,10 @@ class ProbabilityCalculator:
         Output: None
         '''
 
-        
-
         cards_to_add: tuple[Card] = self.deck.draw(num_cards)
         self.community_cards.extend(cards_to_add)
     
-    def estimate(self, n:int=10000, percentage:bool=False) -> float:
-        """Estimates the probability that at least one person has a hand
-            better than the player"s.
-        
-        Positional arguments:
-        n (int): The number of simulations to use in the estimate. Defaults to
-            10000.
-        
-        Optional arguments:
-        percentage (bool): Whether the function should return the percentage 
-            instead of the decimal probability. Defaults to False (return
-            decimal probability).
-
-        Output: float in [0, 1] representing the estimated probability that
-        every opponent has a hand weaker than the player"s.
-        """
-        
-        # Caclulates the strength of every single hand that could be 
-        # construcuted out of cards in the deck, storing them in a 
-        # dictionary for quick access
-        hands: dict[str: int] = {}
-        possible_hands: tuple = combinations(self.deck, 2)
-        for hand in possible_hands:
-            c1, c2 = hand[0], hand[1]
-            full_hand: list = list(hand) + self.community_cards
-            # eg: hands["KHQS"] = strength
-            hands[f"{str(c1)}{str(c2)}"] = PokerHand(full_hand).best_hand()["value"]
-
-        # Samples n combinations of opponents, comparing the strength of the 
-        # best hand at each table to the strength of the player's hand.
-        possible_hands: list = hands.keys()
-        sample_maxes: list[int] = []
-        for game_sample in range(n):
-            game_strengths: list[int] = []
-            compatible_hands: list[str] = list(possible_hands)
-            for opponent in range(self.opponents):
-                new_hand = choice(compatible_hands)
-                compatible_hands: list[str] = [hand for hand in compatible_hands
-                                               if (new_hand[:2] not in hand) and
-                                               (new_hand[2:] not in hand)]
-                game_strengths.append(hands[new_hand])
-            sample_maxes.append(max(game_strengths))
-        
-        full_player: PokerHand = PokerHand(self.player+self.community_cards)
-        num_better = len([game for game in sample_maxes if game < full_player.best_hand()["value"]])
-
-        if percentage is False:
-            return num_better/n
-        else:
-            return 100 * num_better/n
-    
-    def estimate_chart(self, n:int=10000) -> dict:
+    def probabilities(self, n:int=10000) -> dict:
         """Estimates the probability that each type of the hand is the 
             strongest at the table, excluding the player's.
         
@@ -204,7 +177,7 @@ class ProbabilityCalculator:
             game_strengths: list[int] = []
             compatible_hands: list[str] = list(possible_hands)
             for opponent in range(self.opponents):
-                new_hand = choice(compatible_hands)
+                new_hand = random.choice(compatible_hands)
                 compatible_hands: list[str] = [hand for hand in compatible_hands
                                                if (new_hand[:2] not in hand) and
                                                (new_hand[2:] not in hand)]
