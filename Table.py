@@ -203,8 +203,8 @@ class Table:
         hand_level_df["Percentage"] = hand_level_df["Count"].map(lambda x: f"{round(x*100/n_samples, 2)}%")
         hand_level_df = hand_level_df[["Level", "Percentage"]]
         hand_level_df.sort_index(ascending=False, inplace=True)
-        
-        return levels_df_low
+
+        return hand_level_df
 
     @staticmethod
     def index_to_level(index: float) -> str:
@@ -217,8 +217,3 @@ class Table:
             case 0.25:
                 base_level: int = index-0.25
                 return f"{Table.index_level_pairs[base_level]} (High)"
-
-
-x = Table()
-x.draw_community(3)
-print(x.probabilities())
