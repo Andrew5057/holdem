@@ -68,6 +68,8 @@ class Table:
         
         Positional arguments:
         opponents (int): The number of opponents at the table. Defaults to 8.
+        
+        Returns: None
         '''
         self.__init__(opponents)
 
@@ -79,7 +81,7 @@ class Table:
         card2 (Card): Another card in the player's hand.
         opponents (int): The number of opponents at the table. Defaults to 8.
 
-        Output: None
+        Returns: None
         '''
         # Sanity checks
         if not isinstance(card1, Card):
@@ -107,7 +109,7 @@ class Table:
         *new_cards: Any number of Card objects, representing the newly drawn
             community cards.
         
-        Output: None
+        Returns: None
         """
 
         # Sanity checks
@@ -131,11 +133,30 @@ class Table:
         Positional arguments:
         num_cards(int): The number of cards to draw.
 
-        Output: None
+        Returns: None
         """
 
         cards_to_add: tuple[Card] = self.deck.draw(num_cards)
         self.community_cards.extend(cards_to_add)
+    
+    def fold(self, number_folded: int) -> None:
+        """Removes opponents from the table, as if they folded. Folded 
+            opponents will no longer be considered in probability 
+            calculations.
+
+        Positional arguments:
+        number_folded (int): The number of opponents that folded. Raises a 
+            ValueError if this is greater than the number of opponents 
+            currently at the table.
+        
+        Returns: None
+        """
+
+        if not isinstance(number_folded, int):
+            raise TypeError("Positional argument number_folded must be of type int.")
+        if number_folded > self.opponents:
+            raise ValueError("Positional argument number_folded must be less than or equal to the number of opponents.")
+        self.opponents -= number_folded
 
     def probabilities(self, n_samples:int=10000) -> pd.DataFrame:
         """Estimates the probability that each type of the hand is the 
@@ -145,7 +166,7 @@ class Table:
         n_samples (int): The number of simulations to use in the estimate. 
             Defaults to 10000.
         
-        Output: List of three pandas DataFrames. Each contains two columns, 
+        Returns: List of three pandas DataFrames. Each contains two columns, 
             called "Level" and "Percentage" respectively. The Level 
             is a string representing the name of the hand, such as "Pair". 
             The Percentage is a string representing the percentage that 
@@ -247,6 +268,19 @@ class Table:
     
     @staticmethod
     def index_to_level(index: float) -> str:
+        """Converts a numeric hand representation to a string representing 
+            its level, as per Table.probabilities().
+        
+        Poisitional arguments:
+        index (float): The index to be converted to a string level.
+
+        Returns: A string representing the index's level, such as "Pair". If 
+            index is a decimal, the method infers that it is a stronger 
+            or weaker version of the player's hand (for example, both are 
+            Pairs but the player has a stronger kicker) and append "(Low)" or
+            "(High)" to the string accordingly.
+        """
+
         match index % 1:
             case 0:
                 return Table.index_level_pairs[index]

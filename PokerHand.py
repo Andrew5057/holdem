@@ -5,7 +5,9 @@ class PokerHand:
     possible_ranks = 'EDCBA98765432'
 
     def __init__(self, cards: list[Card]):
-        '''Defines 
+        """Represents a hand of Card objects in Texas Holdem. Should be 
+            constructed to include both individual cards and community cards. 
+            Also defines methods to determine the strength of the hand.
 
         Class variables:
         possible_ranks (str): 'EDCBA98765432'. Represents the hexadecimal 
@@ -56,15 +58,16 @@ class PokerHand:
         high_card: Determines the strength of the hand, assuming that it 
             contains no special hands.
         best_hand: Determines the strength of the hand as a six-digit
-            hexadecimal int.
-        '''
+            hexadecimal int. Defined such that higher return values represent 
+            stronger hands.
+        """
         # Cards as they get introduced, no order
         self.cards: list[Card] = cards
         self.cards.sort(reverse=True)
         self.create_string()
     
     def create_string(self) -> None:
-        '''Mutates the cards_string, hearts, diamonds, clubs, and spades 
+        """Mutates the cards_string, hearts, diamonds, clubs, and spades 
             variables to list the hexadecimal values of each card in 
             descending order of strength.
         
@@ -85,7 +88,7 @@ class PokerHand:
         Arguments: None
         
         Output: None
-        '''
+        """
         self.cards.sort(reverse=True)
         self.cards_string = ''.join([card.value for card in self.cards])
 
@@ -103,6 +106,18 @@ class PokerHand:
     # If hand not found, will return 0
 
     def straight_flush(self) -> int:
+        """Determines whether the hand contains a straight flush and, if it 
+            does, how strong the straight flush is. Higher-integered values 
+            represent stronger hands.
+
+        Arguments: None
+
+        Returns: An int in which each hexadecimal digit represents an aspect 
+            of the hand. The first digit is "8". The next five digits are the 
+            numeric values of the cards that make up the straight flush, in 
+            descending order. If a straight flush is not found, returns 0.
+        """
+
         count = 0
         high = None
         
@@ -156,6 +171,19 @@ class PokerHand:
         return int('854321', 16) if (count == 4) and ('E' in self.spades) else 0
     
     def four_of_a_kind(self) -> int:
+        """Determines whether the hand contains a four-of-a-kind and, if it 
+            does, how strong the four-of-a-kind is. Higher-integered values 
+            represent stronger hands.
+
+        Arguments: None
+
+        Returns: An int in which each hexadecimal digit represents an aspect 
+            of the hand. The first digit is "7". The next four digits are the 
+            numeric values of the cards that make up the four-of-a-kind. The 
+            last digit is the numeric value of the kicker. If a 
+            four-of-a-kind is not found, returns 0.
+        """
+        
         four_of_a_kind: re.Match = re.search(r'(.)\1\1\1', self.cards_string)
         if four_of_a_kind is None:
             return 0
@@ -168,6 +196,18 @@ class PokerHand:
         return 0
 
     def full_house(self) -> int:
+        """Determines whether the hand contains a full house and, if it does, 
+            how strong the full house is. Higher-integered values represent 
+            stronger hands.
+
+        Arguments: None
+
+        Returns: An int in which each hexadecimal digit represents an aspect 
+            of the hand. The first digit is "6". The next five digits are the 
+            numeric values of the cards that make up the full house, in 
+            descending order. If a full house is not found, returns 0.
+        """
+
         full_house_2_3: re.Match = re.search(r'(.)\1.*?(.)\2\2', self.cards_string)
         full_house_3_2: re.Match = re.search(r'(.)\1\1.*?(.)\2', self.cards_string)
         if (full_house_2_3 is None) and (full_house_3_2 is None):
@@ -192,6 +232,17 @@ class PokerHand:
 
 
     def flush(self) -> int:
+        """Determines whether the hand contains a flush and, if it does, how 
+            strong the flush is. Higher-integered values represent stronger hands.
+
+        Arguments: None
+
+        Returns: An int in which each hexadecimal digit represents an aspect 
+            of the hand. The first digit is "5". The next five digits are the 
+            numeric values of the cards that make up the flush, in descending 
+            order. If a flush is not found, returns 0.
+        """
+
         if len(self.hearts) >= 5:
             return int('5'+''.join(self.hearts)[:5], 16)
         if len(self.diamonds) >= 5:
@@ -203,6 +254,18 @@ class PokerHand:
         return 0
     
     def straight(self) -> int:
+        """Determines whether the hand contains a straight and, if it does, 
+            how strong the four of a kind is. Higher-integered values 
+            represent stronger hands.
+
+        Arguments: None
+
+        Returns: An int in which each hexadecimal digit represents an aspect 
+            of the hand. The first digit is "4". The next five digits are the 
+            numeric values of the cards that make up the straight, in 
+            descending order. If a straight is not found, returns 0.
+        """
+
         count = 0
         high = None
 
@@ -219,6 +282,19 @@ class PokerHand:
         return int('454321', 16) if (count == 4) and ('E' in self.cards_string) else 0
 
     def three_of_kind(self) -> int:
+        """Determines whether the hand contains a three-of-a-kind and, if it 
+            does, how strong the three-of-a-kind is. Higher-integered values 
+            represent stronger hands.
+
+        Arguments: None
+
+        Returns: An int in which each hexadecimal digit represents an aspect 
+            of the hand. The first digit is "3". The next three digits are the 
+            numeric values of the cards that make up the three-of-a-kind. The 
+            last two digit are the numeric values of the kickers, in 
+            descending order. If a three-of-a-kind is not found, returns 0.
+        """
+
         # Split the string with the three of kind as the delimiter
         split = re.split(r'([2-9ABCDE])\1\1', self.cards_string, maxsplit=1)
         if(len(split) < 3): return 0 # No match
@@ -231,6 +307,18 @@ class PokerHand:
         return int('3'+threeofkind+kickers, 16)
 
     def two_pair(self) -> int:
+        """Determines whether the hand contains a two-pair and, if it does, 
+            how strong the two-pair is. Higher-integered values represent stronger hands.
+
+        Arguments: None
+
+        Returns: An int in which each hexadecimal digit represents an aspect 
+            of the hand. The first digit is "2". The next four digits are the 
+            numeric values of the cards that make up the two-pair, in 
+            descending order. The last digit is the numeric value of 
+            the kicker. If a two-pair is not found, returns 0.
+        """
+
         two_pair: re.Match = re.search(r'(.)\1.*?(.)\2', 
                                        self.cards_string)
         if two_pair is not None:
@@ -244,6 +332,20 @@ class PokerHand:
         return 0
 
     def pair(self) -> int:
+        """Determines whether the hand contains a pair and, if it does, how 
+            strong the strongest pair is. Higher-integered values represent 
+            stronger hands.
+
+        Arguments: None
+
+        Returns: An int in which each hexadecimal digit represents an aspect 
+            of the hand. The first digit is "1". The next two digits are the 
+            numeric values of the cards that make up the strongest pair, in 
+            descending order. The last three digit are the numeric values of 
+            the kickers, in descending order. If a pair is not found, returns 
+            0.
+        """
+
         # Split the string with the top pair as the delimiter
         split = re.split(r'([2-9ABCDE])\1', self.cards_string, maxsplit=1)
         if(len(split) < 3): return 0 # No match
@@ -256,9 +358,41 @@ class PokerHand:
         return int('1'+pair+kickers, 16)
 
     def high_card(self) -> int:
+        """Determines the strength of the hand, assuming that it could only 
+            be interpreted as a high card.
+
+        Arguments: None
+
+        Returns: An int in which each hexadecimal digit represents an aspect 
+            of the hand. The (omitted) first digit is "0". The next five 
+            digits are the cards that make up the hand, in descending order.
+        """
         return int(self.cards_string[:5], 16)
       
     def best_hand(self) -> dict:
+        """Determines the strength of the hand, accounting for both hand type 
+            and kickers. This method is constructed such that one hand's 
+            best_hand value is greater than another's if and only if it beats 
+            that hand, is less than another's if and only if it loses to that 
+            hand, and is equal to another's if and only if it draws that hand.
+            (That is, higher values represent stronger hands.)
+        
+        Arguments: None
+
+        Returns: A two-item dictionary:
+            "level" (int): A value from 0-8 (inclusive) representing the 
+                strength of the hand's type. 0 represents a high card, while 
+                8 represents a straight flush.
+            "value" (int): An integer with 6 hexadecimal digits, each 
+                representing a different aspect of the hand. The first digit 
+                represents the level of the hand. The remaining five digits 
+                are the numeric values of the cards that make up the hand, in 
+                order of their importance in tiebreakers. For example, the 
+                second and third digits for a pair will be the values of the paired 
+                cards, while the last three digits will be the kickers in 
+                decreasing order of strength.
+        """
+
         # Find the strongest hand by testing top-down
         test = self.straight_flush()
         if test != 0: return {"level": 8, "value": test}
