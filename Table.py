@@ -231,6 +231,20 @@ class Table:
             hand_dataframes.append(df.copy())
         return hand_dataframes
 
+    def analyze_and_display(self):
+        # Get tables with results
+        # results = probabilities()
+        
+        # Display
+        import os
+        os.system("cls")
+        # Print cards
+        Card.print_cards(self.community_cards)
+        Card.print_cards(self.player)
+        # Print tables
+        #
+        return
+    
     @staticmethod
     def index_to_level(index: float) -> str:
         match index % 1:
