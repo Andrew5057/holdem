@@ -249,3 +249,18 @@ class Table:
         types_frame.sort_index(inplace=True, ignore_index=True)
 
         return types_frame
+
+    def analyze_and_display(self):
+        # Get tables with results
+        # results = probabilities()
+        
+        # Display
+        import os
+        os.system("cls")
+        # Print cards
+        Card.print_cards(self.community_cards)
+        Card.print_cards(self.player)
+        # Print tables
+        #
+        return
+    
