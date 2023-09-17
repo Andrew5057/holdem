@@ -145,23 +145,32 @@ class Table:
         n_samples (int): The number of simulations to use in the estimate. 
             Defaults to 10000.
         
-        Output: Dictionary in which the name of each type of hand is the key 
-            and the probability of it being the strongest at the table is the 
-            value. Also includes key/value pairs for "the player"s hand but 
-            stronger" and "the player"s hand but weaker", as well as win/loss.
+        Output: List of three pandas DataFrames. Each contains two columns, 
+            called "Level" and "Percentage" respectively. The Level 
+            is a string representing the name of the hand, such as "Pair". 
+            The Percentage is a string representing the percentage that 
+            any other player at the table has that level of hand, followed by 
+            the percentage sign %. The first DataFrame contains only the 
+            levels stronger than the player's, the second DataFrame contains 
+            the levels equal to the players, and the third DataFrame contains 
+            the levels weaker than the player's. The second is further 
+            subdivided into "Level (High)", "Level", and "Level (Weak)", 
+            which represent hands that beat, draw, and lose to the player, 
+            respectively.
         """
         
         # Find the player's hand strength
         player_full_hand: PokerHand = PokerHand(self.player + self.community_cards)
         player_strength: dict = player_full_hand.best_hand()
+        player_level: int = player_strength["level"]
 
         # Dictionary that will store the number of opponents with each hand level. Indexes are the numeric 
         # representations of each level, as per PokerHand.best_hand()
         hand_level_counts = {level: 0 for level in range(9)}
         # These two represent "player's level but weaker" and "player's level 
         # but stronger," respectively
-        hand_level_counts[player_strength["level"]-0.25] = 0
-        hand_level_counts[player_strength["level"]+0.25] = 0
+        hand_level_counts[player_level-0.25] = 0
+        hand_level_counts[player_level+0.25] = 0
 
         # Stores the strength of every possible opponent hand in a dict. Doing this now saves a lot of computation time 
         # later. Keys are the string representations of the two cards in each starting hand.
@@ -181,13 +190,13 @@ class Table:
             chosen_cards = random.sample(self.deck.cards, self.opponents*2)
             opponents_hands = [f"{chosen_cards[2*n]}{chosen_cards[2*n+1]}" for n in range(self.opponents)]
             opponents_strengths = [hand_strengths[hand] for hand in opponents_hands]
-            # Finds the best hand. Can't use max because that wouldn't store the level.
+            # Finds the best hand. Can't use max() because that wouldn't store the level.
             best_hand = {"level": 0, "value": 0}
             for strength in opponents_strengths:
                 if strength["value"] > best_hand["value"]:
                     best_hand = strength
             # Increments the correct value in the levels dictionary
-            if best_hand["level"] != player_strength["level"]:
+            if best_hand["level"] != player_level:
                 hand_level_counts[best_hand["level"]] += 1
             else:
                 if best_hand["value"] > player_strength["value"]:
@@ -197,14 +206,30 @@ class Table:
                 else:
                     hand_level_counts[best_hand["level"]-0.25] += 1
         
-        # Pretty-printing
-        hand_level_df: pd.DataFrame = pd.DataFrame.from_dict(hand_level_counts, orient="index", columns = ["Count"])
-        hand_level_df["Level"] = hand_level_df.index.map(Table.index_to_level)
-        hand_level_df["Percentage"] = hand_level_df["Count"].map(lambda x: f"{round(x*100/n_samples, 2)}%")
-        hand_level_df = hand_level_df[["Level", "Percentage"]]
-        hand_level_df.sort_index(ascending=False, inplace=True)
+        # Splitting the dictionary into same-level, higher-level, and lower-level dicts.
+        # Could be made more efficient by doing this during the loop, but that takes refactoring.
+        higher_level_counts: dict = {}
+        lower_level_counts: dict = {}
+        same_level_counts: dict = {}
 
-        return hand_level_df
+        for level, count in hand_level_counts.items():
+            if level >= player_level + 1:
+                higher_level_counts[level] = count
+            elif level <= player_level - 1:
+                lower_level_counts[level] = count
+            else:
+                same_level_counts[level] = count
+
+        # Pretty-printing as DataFrames
+        hand_dataframes: list[pd.DataFrame] = []
+        for hand_dict in (higher_level_counts, same_level_counts, lower_level_counts):
+            df: pd.DataFrame = pd.DataFrame.from_dict(hand_dict, orient="index", columns = ["Count"])
+            df["Level"] = df.index.map(Table.index_to_level)
+            df["Percentage"] = df["Count"].map(lambda x: f"{round(x*100/n_samples, 2)}%")
+            df = df[["Level", "Percentage"]]
+            df.sort_index(ascending=False, inplace=True, ignore_index=True)
+            hand_dataframes.append(df.copy())
+        return hand_dataframes
 
     @staticmethod
     def index_to_level(index: float) -> str:
