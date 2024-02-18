@@ -1,5 +1,5 @@
 class Card:
-    def __init__(self, rank: str, suit: str = None):
+    def __init__(self, rank: str = None, suit: str = None):
         '''A class that represents a standard playing card.
         
         Argument pattern 1:
@@ -17,6 +17,11 @@ class Card:
             Queen, King, and Ace as 11, 12, 13, and 14 respectively.
         '''
 
+        if (suit is None) and (rank is None):
+            self.suit = ""
+            self.rank = ""
+            return
+        
         # Handles pattern 1.
         if suit is None:
             suit: str = rank[-1]
@@ -150,7 +155,7 @@ class Card:
                         "|           {} |".format(lower_right),
                         "|______________|"]
             case _:
-                return [""]*10
+                return ["       "]*10
 
     @staticmethod
     def print_cards(cards: list):

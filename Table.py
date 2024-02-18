@@ -254,16 +254,20 @@ class Table:
 
     def analyze_and_display(self):
         # Get tables with results
-        # results = probabilities()
+        tables = self.probabilities()
         
         # Display
         import os
         os.system("cls")
         # Print cards
-        Card.print_cards(self.community_cards)
-        Card.print_cards(self.player)
+        Card.print_cards(self.player + [Card()] + self.community_cards)
+        # Card.print_cards(self.community_cards)
+
         # Print tables
-        #
+        from tabulate import tabulate
+        print(tabulate(tables[0], tablefmt='psql')) #, headers='keys', tablefmt='psql'))
+        print(tabulate(tables[1], tablefmt='psql'))
+        print(tabulate(tables[2], tablefmt='psql'))
         return
     
     @staticmethod
