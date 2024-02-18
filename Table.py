@@ -2,8 +2,9 @@ from Card import Card
 from PokerHand import PokerHand
 from Deck import Deck
 import itertools
-import random
 import pandas as pd
+import random
+from tabulate import tabulate
 
 # human_readable returns [(pair, two_pair, ...), (card ranks)]
 
@@ -264,7 +265,7 @@ class Table:
         # Card.print_cards(self.community_cards)
 
         # Print tables
-        from tabulate import tabulate
+        
         print(tabulate(tables[0], tablefmt='psql')) #, headers='keys', tablefmt='psql'))
         print(tabulate(tables[1], tablefmt='psql'))
         print(tabulate(tables[2], tablefmt='psql'))
