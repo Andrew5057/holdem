@@ -5,9 +5,10 @@ class PokerHand:
     possible_ranks = 'EDCBA98765432'
 
     def __init__(self, cards: list[Card]):
-        """Represents a hand of Card objects in Texas Holdem. Should be 
-            constructed to include both individual cards and community cards. 
-            Also defines methods to determine the strength of the hand.
+        """Represents a hand of Card objects in Texas Holdem.
+        
+        Should be constructed to include both individual cards and community 
+        cards. Also defines methods to determine the strength of the hand.
 
         Class variables:
         possible_ranks (str): 'EDCBA98765432'. Represents the hexadecimal 
