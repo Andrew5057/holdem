@@ -22,7 +22,7 @@ class Table:
         8: "Straight Flush",
     }
 
-    def __init__(self, opponents:int=8):
+    def __init__(self):
         """Defines a class that simulates & analyzes games of Texas
             Holdem
         
@@ -31,8 +31,7 @@ class Table:
             declared.
 
         Optional arguments:
-        opponents (int): The number of opponents at the table. Does not 
-            include the player. Defaults to 8.
+            None
         
         Instance variables:
         player (list): A list object representing the player's  hand, not 
@@ -41,7 +40,6 @@ class Table:
             community cards.
         deck (Deck): A Deck object representing the cards in the gmae that 
             are neither part of the player's hand nor the community cards.
-        opponents (int): The number of other players in play. Defaults to 8.
         n (int): The number of random samples used for estimation. Defaults to
             10,000.
 
@@ -51,37 +49,27 @@ class Table:
         estimate: Uses random sampling to estimate the probability of at 
             least one player at the table beating the player's hand.
         """
-        # Sanity check
-        if not isinstance(opponents, int):
-            raise TypeError("opponents must be of type int.")
-        if opponents < 1:
-            raise ValueError("opponents must be greater than 1.")
 
         self.deck: Deck = Deck()
         self.deck.shuffle()
         self.player: list[Card] = list(self.deck.draw(2))
-        self.opponents: int = opponents
         self.community_cards: list[Card] = []
 
-    def new_game(self, opponents: int = 8):
+    def new_game(self):
         '''Re-initizalizes the table. Uses an alternative name for user 
             friendliness.
-        
-        Positional arguments:
-        opponents (int): The number of opponents at the table. Defaults to 8.
-        
+               
         Returns: None
         '''
-        self.__init__(opponents)
+        self.__init__()
 
-    def manual_game(self, card1: Card, card2: Card, opponents: int = 8):
+    def manual_game(self, card1: Card, card2: Card):
         '''Re-initializes the table with a user-defined player hand.
         
         Positional arguments:
         card1 (Card): One card in the player's hand.
         card2 (Card): Another card in the player's hand.
-        opponents (int): The number of opponents at the table. Defaults to 8.
-
+ 
         Returns: None
         '''
         # Sanity checks
@@ -89,11 +77,8 @@ class Table:
             raise TypeError("Positional variable card1 must be of type Card.")
         if not isinstance(card2, Card):
             raise TypeError("Positional variable card2 must be of type Card.")
-        if not isinstance(opponents, int):
-            raise TypeError("Optional variable opponents must be of type int.")
 
         self.player: list[Card] = [card1, card2]
-        self.opponents = opponents
         self.deck: Deck = Deck()
         self.deck.shuffle()
         self.deck.remove(card1)
@@ -140,26 +125,7 @@ class Table:
         cards_to_add: tuple[Card] = self.deck.draw(num_cards)
         self.community_cards.extend(cards_to_add)
     
-    def fold(self, number_folded: int) -> None:
-        """Removes opponents from the table, as if they folded. Folded 
-            opponents will no longer be considered in probability 
-            calculations.
-
-        Positional arguments:
-        number_folded (int): The number of opponents that folded. Raises a 
-            ValueError if this is greater than the number of opponents 
-            currently at the table.
-        
-        Returns: None
-        """
-
-        if not isinstance(number_folded, int):
-            raise TypeError("Positional argument number_folded must be of type int.")
-        if number_folded > self.opponents:
-            raise ValueError("Positional argument number_folded must be less than or equal to the number of opponents.")
-        self.opponents -= number_folded
-
-    def probabilities(self, n_samples:int=10000) -> pd.DataFrame:
+    def probabilities(self, opponents, n_samples:int=10000) -> pd.DataFrame:
         """Estimates the probability that each type of the hand is the 
             strongest at the table, excluding the player's.
         
@@ -209,8 +175,8 @@ class Table:
         for sample in range(n_samples):
             # This is the fastest way I can think of to set up all the the 
             # hands.
-            chosen_cards = random.sample(self.deck.cards, self.opponents*2)
-            opponents_hands = [f"{chosen_cards[2*n]}{chosen_cards[2*n+1]}" for n in range(self.opponents)]
+            chosen_cards = random.sample(self.deck.cards, opponents*2)
+            opponents_hands = [f"{chosen_cards[2*n]}{chosen_cards[2*n+1]}" for n in range(opponents)]
             opponents_strengths = [hand_strengths[hand] for hand in opponents_hands]
             # Finds the best hand. Can't use max() because that wouldn't store the level.
             best_hand = {"level": 0, "value": 0}
