@@ -13,7 +13,7 @@ class Card:
         Instance variables:
         rank: A string containing the rank
         suit: A string containing the first letter of the suit (capitalized)
-        value: An integer containing the value of the card, with Jack,
+        value: A string containing the hexadecimal value of the card, with Jack,
             Queen, King, and Ace as 11, 12, 13, and 14 respectively.
         '''
 
