@@ -244,9 +244,21 @@ class Table:
             hand_dataframes.append(df.copy())
         return hand_dataframes
 
-    def analyze_and_display(self):
-        # Get tables with results
-        tables = self.probabilities(8)
+    def analyze_and_display(self, opponents):
+        # Get results for each opponents input
+        results = []
+        for n in opponents:
+            results.append(self.probabilities(n))
+        # print(len(results[1]))
+
+        # Right now results is a list of list of pandas tables
+        stronger_hand = results[0][0]
+        same_hand = results[0][1]
+        weaker_hand = results[0][2]
+        for i in range(1, len(opponents)):
+            stronger_hand = stronger_hand.merge(results[i][0], how='outer', on='Level')
+            same_hand = same_hand.merge(results[i][1], how='outer', on='Level')
+            weaker_hand = weaker_hand.merge(results[i][2], how='outer', on='Level')
         
         # Display
         import os
@@ -255,11 +267,10 @@ class Table:
         Card.print_cards(self.player + [Card()] + self.community_cards)
         # Card.print_cards(self.community_cards)
 
-        # Print tables
-        
-        print(tabulate(tables[0], tablefmt='psql')) #, headers='keys', tablefmt='psql'))
-        print(tabulate(tables[1], tablefmt='psql'))
-        print(tabulate(tables[2], tablefmt='psql'))
+        # tablefmt options: psql(preferred), plain, simple, grid, pipe, html, outline, etc
+        print(tabulate(stronger_hand, headers=['Hand']+opponents, tablefmt='psql', showindex=False))
+        print(tabulate(same_hand, tablefmt='psql', showindex=False, ))
+        print(tabulate(weaker_hand, tablefmt='psql', showindex=False))
         return
     
     @staticmethod
