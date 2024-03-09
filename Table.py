@@ -125,6 +125,8 @@ class Table:
         cards_to_add: tuple[Card] = self.deck.draw(num_cards)
         self.community_cards.extend(cards_to_add)
     
+
+
     def probabilities(self, opponents, n_samples:int=10000) -> pd.DataFrame:
         """Estimates the probability that each type of the hand is the 
             strongest at the table, excluding the player's.
@@ -146,7 +148,7 @@ class Table:
             which represent hands that beat, draw, and lose to the player, 
             respectively.
         """
-        
+
         # Find the player's hand strength
         player_full_hand: PokerHand = PokerHand(self.player + self.community_cards)
         player_strength: dict = player_full_hand.best_hand()
@@ -173,11 +175,34 @@ class Table:
         
         # Random sampling
         for sample in range(n_samples):
-            # This is the fastest way I can think of to set up all the the 
-            # hands.
-            chosen_cards = random.sample(self.deck.cards, opponents*2)
-            opponents_hands = [f"{chosen_cards[2*n]}{chosen_cards[2*n+1]}" for n in range(opponents)]
+            reasonable = False
+            while not reasonable:
+                reasonable = True
+                # This is the fastest way I can think of to set up all the the 
+                # hands.
+                chosen_cards = random.sample(self.deck.cards, opponents*2)
+                opponents_hands = [(chosen_cards[2*n], chosen_cards[2*n+1]) for n in range(opponents)]
+                for hand in opponents_hands:
+                    """
+                    Reasonability check. Keep if:
+                    - At least 1 King/Ace
+                    - Both > 10
+                    - Consecutive cards
+                    - Suited
+                    - Pair
+                    Otherwise draw a new set
+                    """
+                    card1, card2 = hand
+                    if ((int(card1.value, 16) < 13) and (int(card2.value, 16) < 13)) and \
+                            ((int(card1.value, 16)) < 10 or (int(card2.value, 16) < 10)) and \
+                            ((abs(int(card1.value, 16)-int(card2.value, 16))) > 1) and \
+                                (card1.suit != card2.suit):
+                        reasonable = False
+                        break
+
+            opponents_hands = [str(hand[0]) + str(hand[1]) for hand in opponents_hands]
             opponents_strengths = [hand_strengths[hand] for hand in opponents_hands]
+            
             # Finds the best hand. Can't use max() because that wouldn't store the level.
             best_hand = {"level": 0, "value": 0}
             for strength in opponents_strengths:
@@ -221,7 +246,7 @@ class Table:
 
     def analyze_and_display(self):
         # Get tables with results
-        tables = self.probabilities()
+        tables = self.probabilities(8)
         
         # Display
         import os
