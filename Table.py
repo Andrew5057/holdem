@@ -77,6 +77,8 @@ class Table:
             raise TypeError("Positional variable card1 must be of type Card.")
         if not isinstance(card2, Card):
             raise TypeError("Positional variable card2 must be of type Card.")
+        if (card1 == card2):
+            raise ValueError("Positional variables card1 and card2 cannot be identical")
 
         self.player: list[Card] = [card1, card2]
         self.deck: Deck = Deck()
