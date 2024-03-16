@@ -3,31 +3,33 @@ from Deck import Deck
 from PokerHand import PokerHand
 from Table import Table
 
+OPPONENTS = [7, 3]
+
 def random_game():
     table: Table = Table()
     
     # Initial draw
     print("Analyzing the starting hands...")
     table.new_game()
-    table.analyze_and_display(opponents=[7, 5, 3, 1])
+    table.analyze_and_display(opponents=OPPONENTS)
 
     # Flop
     input("Hit Enter for the flop")
     print("Analyzing...")
     table.draw_community(num_cards = 3)
-    table.analyze_and_display(opponents=[7, 5, 3, 1])
+    table.analyze_and_display(opponents=OPPONENTS)
 
     # Turn
     input("Hit Enter for the turn")
     print("Analyzing...")
     table.draw_community(num_cards = 1)
-    table.analyze_and_display(opponents=[7, 5, 3, 1])
+    table.analyze_and_display(opponents=OPPONENTS)
 
     # River
     input("Hit Enter for the river")
     print("Analyzing...")
     table.draw_community(num_cards = 1)
-    table.analyze_and_display(opponents=[7, 5, 3, 1])
+    table.analyze_and_display(opponents=OPPONENTS)
 
 def manual_game():
     card1 = input("Enter your first pocket card: ")
@@ -68,25 +70,25 @@ def manual_game():
     # Initial draw
     print("Analyzing the starting hands...")
     table.manual_game(card1, card2)
-    table.analyze_and_display(opponents=[7, 5, 3, 1])
+    table.analyze_and_display(opponents=OPPONENTS)
 
     # Flop
     input("Hit Enter for the flop")
     print("Analyzing...")
     table.draw_community(num_cards = 3)
-    table.analyze_and_display(opponents=[7, 5, 3, 1])
+    table.analyze_and_display(opponents=OPPONENTS)
 
     # Turn
     input("Hit Enter for the turn")
     print("Analyzing...")
     table.draw_community(num_cards = 1)
-    table.analyze_and_display(opponents=[7, 5, 3, 1])
+    table.analyze_and_display(opponents=OPPONENTS)
 
     # River
     input("Hit Enter for the river")
     print("Analyzing...")
     table.draw_community(num_cards = 1)
-    table.analyze_and_display(opponents=[7, 5, 3, 1])
+    table.analyze_and_display(opponents=OPPONENTS)
 
 def play_game():
     play_mode = input("/Manual/ game or /Random/ game? ").lower()

@@ -29,7 +29,8 @@ class PokerHand:
             spade cards in the hand in descending order.
         
         Static methods:
-        human_readable: Converts an int to _______________
+        human_readable: Converts an int to a human-readable string depicting 
+            its equivalent card.
 
         Instance methods:
         create_string: Initializes or modifies the cards_string, hearts, 
@@ -62,6 +63,10 @@ class PokerHand:
             hexadecimal int. Defined such that higher return values represent 
             stronger hands.
         """
+        if not isinstance(cards, list):
+            raise TypeError(f"Positional argument cards must be of type list, not {type(cards)}")
+        if any(not isinstance(card, Card) for card in cards):
+            raise ValueError("All elements of positional argument cards must be of type Card.")
         # Cards as they get introduced, no order
         self.cards: list[Card] = cards
         self.cards.sort(reverse=True)
@@ -415,6 +420,10 @@ class PokerHand:
 
     @staticmethod
     def human_readable_level(level: int):
+        if not isinstance(level, int):
+            raise TypeError(f"Positional argument level must be of type int, not {type(level)}")
+        if (level < 0 or level > 7):
+            raise ValueError(f"Positional argument level must be between 0 and 7, inclusive, not {level}.")
         return ["High Hand",
                 "Pair",
                 "Two Pair",
@@ -426,6 +435,8 @@ class PokerHand:
 
     @staticmethod
     def human_readable_cards(intval: int):
+        if not isinstance(intval, int):
+            raise TypeError(f"Positional argument intval must be of type int, not {type(intval)}")
         # Determine number of cards. Only options are 2 or 5
         ncards = 2 if intval < 0x11111 else 5
         cards = ""
@@ -437,6 +448,8 @@ class PokerHand:
         return cards
 
     def append(self, card: Card) -> None:
+        if not isinstance(card, Card):
+            raise TypeError(f"Positional argument card must be of type Card, not {type(Card)}")
         self.cards.append(card)
         self.cards.sort(reverse=True)
         self.create_string()

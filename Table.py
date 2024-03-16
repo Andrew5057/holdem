@@ -247,6 +247,13 @@ class Table:
         return hand_dataframes
 
     def analyze_and_display(self, opponents):
+        if not isinstance(opponents, list):
+            raise TypeError(f"Positional argument opponents must be of type list, not {type(opponents)}")
+        for opponent in opponents:
+            if not isinstance(opponent, int):
+                raise TypeError(f"All elements of positional argument opponents must be of type int, not {type(opponent)}")
+            if (opponent < 1):
+                raise ValueError(f"All elements of positional argument opponents must be at least 1, not {opponent}")
         # Get results for each opponents input
         results = []
         for n in opponents:
