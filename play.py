@@ -6,30 +6,35 @@ from Table import Table
 def random_game():
     table: Table = Table()
     
+    opponents=[7, 5, 3, 1]
+
     # Initial draw
     print("Analyzing the starting hands...")
     table.new_game()
-    table.analyze_and_display(opponents=[7, 5, 3, 1])
+    table.analyze_and_display(opponents=opponents)
 
     # Flop
     input("Hit Enter for the flop")
     print("Analyzing...")
     table.draw_community(num_cards = 3)
-    table.analyze_and_display(opponents=[7, 5, 3, 1])
+    table.analyze_and_display(opponents=opponents)
 
     # Turn
     input("Hit Enter for the turn")
     print("Analyzing...")
     table.draw_community(num_cards = 1)
-    table.analyze_and_display(opponents=[7, 5, 3, 1])
+    table.analyze_and_display(opponents=opponents)
 
     # River
     input("Hit Enter for the river")
     print("Analyzing...")
     table.draw_community(num_cards = 1)
-    table.analyze_and_display(opponents=[7, 5, 3, 1])
+    table.analyze_and_display(opponents=opponents)
 
 def manual_game():
+
+    opponents = [7, 5, 3, 1]
+
     card1 = input("Enter your first pocket card: ")
     try:
         card1: Card = Card(card1)
@@ -68,25 +73,25 @@ def manual_game():
     # Initial draw
     print("Analyzing the starting hands...")
     table.manual_game(card1, card2)
-    table.analyze_and_display(opponents=[7, 5, 3, 1])
+    table.analyze_and_display(opponents=opponents)
 
     # Flop
     input("Hit Enter for the flop")
     print("Analyzing...")
     table.draw_community(num_cards = 3)
-    table.analyze_and_display(opponents=[7, 5, 3, 1])
+    table.analyze_and_display(opponents=opponents)
 
     # Turn
     input("Hit Enter for the turn")
     print("Analyzing...")
     table.draw_community(num_cards = 1)
-    table.analyze_and_display(opponents=[7, 5, 3, 1])
+    table.analyze_and_display(opponents=opponents)
 
     # River
     input("Hit Enter for the river")
     print("Analyzing...")
     table.draw_community(num_cards = 1)
-    table.analyze_and_display(opponents=[7, 5, 3, 1])
+    table.analyze_and_display(opponents=opponents)
 
 def play_game():
     play_mode = input("/Manual/ game or /Random/ game? ").lower()
