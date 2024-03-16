@@ -6,7 +6,7 @@ from Table import Table
 def random_game():
     table: Table = Table()
     
-    opponents=[7, 5, 3, 1]
+    opponents=[7, 5, 4, 2]
 
     # Initial draw
     print("Analyzing the starting hands...")
