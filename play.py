@@ -8,6 +8,8 @@ OPPONENTS = [7, 3]
 def random_game():
     table: Table = Table()
     
+    opponents=[7, 5, 3, 1]
+
     # Initial draw
     print("Analyzing the starting hands...")
     table.new_game()
@@ -32,6 +34,9 @@ def random_game():
     table.analyze_and_display(opponents=OPPONENTS)
 
 def manual_game():
+
+    opponents = [7, 5, 3, 1]
+
     card1 = input("Enter your first pocket card: ")
     try:
         card1: Card = Card(card1)
