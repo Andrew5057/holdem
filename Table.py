@@ -246,7 +246,7 @@ class Table:
             hand_dataframes.append(df.copy())
         return hand_dataframes
 
-    def analyze_and_display(self, opponents):
+    def analyze_and_display(self, opponents: list[int]):
         if not isinstance(opponents, list):
             raise TypeError(f"Positional argument opponents must be of type list, not {type(opponents)}")
         for opponent in opponents:
@@ -254,11 +254,18 @@ class Table:
                 raise TypeError(f"All elements of positional argument opponents must be of type int, not {type(opponent)}")
             if (opponent < 1):
                 raise ValueError(f"All elements of positional argument opponents must be at least 1, not {opponent}")
+
         # Get results for each opponents input
         results = []
         for n in opponents:
-            results.append(self.probabilities(n))
-        # print(len(results[1]))
+            result_n = self.probabilities(n)
+            result_n[0] = result_n[0].rename(columns={'Percentage': n})
+            result_n[1] = result_n[1].rename(columns={'Percentage': n})
+            result_n[2] = result_n[2].rename(columns={'Percentage': n})
+            results.append(result_n)
+            # print(result_n[0].columns)
+            # print(result_n[1].columns)
+            # print(result_n[2].columns)
 
         # Right now results is a list of list of pandas tables
         stronger_hand = results[0][0]
@@ -268,7 +275,15 @@ class Table:
             stronger_hand = stronger_hand.merge(results[i][0], how='outer', on='Level')
             same_hand = same_hand.merge(results[i][1], how='outer', on='Level')
             weaker_hand = weaker_hand.merge(results[i][2], how='outer', on='Level')
-        
+
+        # Reorder and standardize columns
+        stronger_hand = stronger_hand[["Level"]+opponents]
+        same_hand = same_hand[["Level"]+opponents]
+        weaker_hand = weaker_hand[["Level"]+opponents]
+        # print(stronger_hand.columns)
+        # print(same_hand.columns)
+        # print(weaker_hand.columns)
+  
         # Display
         import os
         os.system("cls")
@@ -278,7 +293,7 @@ class Table:
 
         # tablefmt options: psql(preferred), plain, simple, grid, pipe, html, outline, etc
         print(tabulate(stronger_hand, headers=['Hand']+opponents, tablefmt='psql', showindex=False))
-        print(tabulate(same_hand, tablefmt='psql', showindex=False, ))
+        print(tabulate(same_hand, tablefmt='psql', showindex=False))
         print(tabulate(weaker_hand, tablefmt='psql', showindex=False))
         return
     
