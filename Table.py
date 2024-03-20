@@ -239,7 +239,7 @@ class Table:
         hand_dataframes: list[pd.DataFrame] = []
         for hand_dict in (higher_level_counts, same_level_counts, lower_level_counts):
             df: pd.DataFrame = pd.DataFrame.from_dict(hand_dict, orient="index", columns = ["Count"])
-            df["Level"] = df.index.map(Table.index_to_level)
+            df["Level"] = df.index
             df["Percentage"] = df["Count"].map(lambda x: f"{round(x*100/n_samples, 2)}%")
             df = df[["Level", "Percentage"]]
             df.sort_index(ascending=False, inplace=True, ignore_index=True)
@@ -283,6 +283,16 @@ class Table:
         # print(stronger_hand.columns)
         # print(same_hand.columns)
         # print(weaker_hand.columns)
+
+        # Sort descending by level
+        stronger_hand.sort_values(by="Level", ascending=False, inplace=True)
+        same_hand.sort_values(by="Level", ascending=False, inplace=True)
+        weaker_hand.sort_values(by="Level", ascending=False, inplace=True)
+
+        # Translate numeric levels to names
+        stronger_hand["Level"] = stronger_hand["Level"].map(Table.index_to_level)
+        same_hand["Level"] = same_hand["Level"].map(Table.index_to_level)
+        weaker_hand["Level"] = weaker_hand["Level"].map(Table.index_to_level)
   
         # Display
         import os
@@ -308,8 +318,8 @@ class Table:
         Returns: A string representing the index's level, such as "Pair". If 
             index is a decimal, the method infers that it is a stronger 
             or weaker version of the player's hand (for example, both are 
-            Pairs but the player has a stronger kicker) and append "(Low)" or
-            "(High)" to the string accordingly.
+            Pairs but the player has a stronger kicker) and append "(Lower)" or
+            "(Higher)" to the string accordingly.
         """
 
         match index % 1:
@@ -317,7 +327,7 @@ class Table:
                 return Table.index_level_pairs[index]
             case 0.75:
                 base_level: int = index+0.25
-                return f"{Table.index_level_pairs[base_level]} (Low)"
+                return f"{Table.index_level_pairs[base_level]} (Lower)"
             case 0.25:
                 base_level: int = index-0.25
-                return f"{Table.index_level_pairs[base_level]} (High)"
+                return f"{Table.index_level_pairs[base_level]} (Higher)"

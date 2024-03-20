@@ -3,13 +3,11 @@ from Deck import Deck
 from PokerHand import PokerHand
 from Table import Table
 
-OPPONENTS = [7, 3]
+OPPONENTS = [4, 2]
 
 def random_game():
     table: Table = Table()
     
-    opponents=[7, 5, 4, 2]
-
     # Initial draw
     print("Analyzing the starting hands...")
     table.new_game()
@@ -34,8 +32,6 @@ def random_game():
     table.analyze_and_display(opponents=OPPONENTS)
 
 def manual_game():
-
-    opponents = [7, 5, 3, 1]
 
     card1 = input("Enter your first pocket card: ")
     try:
@@ -101,7 +97,11 @@ def play_game():
     match play_mode:
         case "random":
             random_game()
+        case "r":
+            random_game()
         case "manual":
+            manual_game()
+        case "m":
             manual_game()
         case _:
             play_mode = input("I couldn't understand that. /Manual/ game or /Random/ game? ").lower()
